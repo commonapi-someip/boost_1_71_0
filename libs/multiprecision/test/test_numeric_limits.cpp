@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////
 //  Copyright 2011 John Maddock. Distributed under the Boost
 //  Software License, Version 1.0. (See accompanying file
-//  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_
+//  LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt
 
 #ifdef _MSC_VER
 #  define _SCL_SECURE_NO_WARNINGS
@@ -109,13 +109,17 @@ void test_specific(const boost::mpl::int_<boost::multiprecision::number_kind_flo
          BOOST_TEST(!(boost::math::isnormal)(std::numeric_limits<Number>::infinity()));
          BOOST_TEST(!(boost::math::isnan)(std::numeric_limits<Number>::infinity()));
       }
-      if(std::numeric_limits<Number>::has_denorm)
+      if(std::numeric_limits<Number>::has_denorm == std::denorm_present)
       {
          BOOST_TEST(FP_SUBNORMAL == (boost::math::fpclassify)(std::numeric_limits<Number>::denorm_min()));
+         BOOST_TEST(FP_SUBNORMAL == (boost::math::fpclassify)(std::numeric_limits<Number>::min() / 2));
          BOOST_TEST((boost::math::isfinite)(std::numeric_limits<Number>::denorm_min()));
          BOOST_TEST(!(boost::math::isnormal)(std::numeric_limits<Number>::denorm_min()));
          BOOST_TEST(!(boost::math::isinf)(std::numeric_limits<Number>::denorm_min()));
          BOOST_TEST(!(boost::math::isnan)(std::numeric_limits<Number>::denorm_min()));
+         BOOST_TEST(0 == std::numeric_limits<Number>::denorm_min() / 2);
+         BOOST_TEST(0 != std::numeric_limits<Number>::min() / 2);
+         BOOST_TEST(0 != std::numeric_limits<Number>::denorm_min());
       }
    }
    Number n = 0;

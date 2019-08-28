@@ -1,5 +1,5 @@
 /*
- *          Copyright Andrey Semashev 2007 - 2014.
+ *          Copyright Andrey Semashev 2007 - 2015.
  * Distributed under the Boost Software License, Version 1.0.
  *    (See accompanying file LICENSE_1_0.txt or copy at
  *          http://www.boost.org/LICENSE_1_0.txt)
@@ -144,7 +144,7 @@ void init()
     sink->set_formatter
     (
         expr::stream
-            << expr::attr< unsigned int >("LineID")
+            << expr::attr< unsigned int >("LineID").or_throw()  // this attribute will not be found, which will cause an exception
             << ": <" << expr::attr< severity_level >("Severity")
             << "> " << expr::smessage
     );

@@ -13,7 +13,7 @@
 #include "test3.hpp"
 
 // Test matrix expression templates
-template<class M, int N>
+template<class M, std::size_t N>
 struct test_my_matrix {
     typedef typename M::value_type value_type;
 
@@ -36,7 +36,7 @@ struct test_my_matrix {
             std::cout << "m1.swap (m2) = " << m1 << " " << m2 << std::endl;
 
             // Zero assignment
-            m1 = ublas::zero_matrix<> (m1.size1 (), m1.size2 ());
+            m1 = ublas::zero_matrix<short> (m1.size1 (), m1.size2 ());
             std::cout << "m1.zero_matrix = " << m1 << std::endl;
             m1 = m2;
 

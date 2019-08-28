@@ -2,7 +2,7 @@
 //  Copyright Christopher Kormanyos 2002 - 2011.
 //  Copyright 2011 John Maddock. Distributed under the Boost
 //  Software License, Version 1.0. (See accompanying file
-//  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_
+//  LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt
 //
 // This work is based on an earlier work:
 // "Algorithm 910: A Portable C++ Multiple-Precision System for Special-Function Calculations",
@@ -54,6 +54,26 @@
 #endif
 #ifdef TEST_CPP_BIN_FLOAT
 #include <boost/multiprecision/cpp_bin_float.hpp>
+#endif
+
+template <class T>
+struct has_poor_large_value_support
+{
+   static const bool value = false;
+};
+#ifdef TEST_CPP_DEC_FLOAT
+template <unsigned Digits10, class ExponentType, class Allocator, boost::multiprecision::expression_template_option ExpressionTemplates>
+struct has_poor_large_value_support<boost::multiprecision::number<boost::multiprecision::cpp_dec_float<Digits10, ExponentType, Allocator>, ExpressionTemplates> >
+{
+   static const bool value = true;
+};
+#endif
+#ifdef TEST_CPP_BIN_FLOAT
+template<unsigned Digits, boost::multiprecision::backends::digit_base_type DigitBase, class Allocator, class Exponent, Exponent MinE, Exponent MaxE, boost::multiprecision::expression_template_option ExpressionTemplates>
+struct has_poor_large_value_support<boost::multiprecision::number<boost::multiprecision::cpp_bin_float<Digits, DigitBase, Allocator, Exponent, MinE, MaxE>, ExpressionTemplates> >
+{
+   static const bool value = true;
+};
 #endif
 
 template <class T>
@@ -313,6 +333,15 @@ void test()
    }
    std::cout << "Max error was: " << max_err << std::endl;
    BOOST_TEST(max_err < 20);
+
+   if (has_poor_large_value_support<T>::value)
+   {
+      T bug_value = 12 / std::numeric_limits<T>::epsilon();
+      for (unsigned i = 0; i < 20; ++i, bug_value *= 1.1)
+      {
+         BOOST_TEST(cos(bug_value) == 1);
+      }
+   }
 }
 
 
@@ -344,8 +373,8 @@ int main()
    test<boost::multiprecision::number<boost::multiprecision::cpp_dec_float<62> > >();
    test<boost::multiprecision::number<boost::multiprecision::cpp_dec_float<61, long long> > >();
    test<boost::multiprecision::number<boost::multiprecision::cpp_dec_float<60, long long> > >();
-   test<boost::multiprecision::number<boost::multiprecision::cpp_dec_float<59, long long, std::allocator<void> > > >();
-   test<boost::multiprecision::number<boost::multiprecision::cpp_dec_float<58, long long, std::allocator<void> > > >();
+   test<boost::multiprecision::number<boost::multiprecision::cpp_dec_float<59, long long, std::allocator<char> > > >();
+   test<boost::multiprecision::number<boost::multiprecision::cpp_dec_float<58, long long, std::allocator<char> > > >();
 #endif
 #endif
 #ifdef TEST_FLOAT128
@@ -353,6 +382,7 @@ int main()
 #endif
 #ifdef TEST_CPP_BIN_FLOAT
    test<boost::multiprecision::cpp_bin_float_50>();
+   test<boost::multiprecision::number<boost::multiprecision::cpp_bin_float<35, boost::multiprecision::digit_base_10, std::allocator<char>, boost::long_long_type> > >();
 #endif
    return boost::report_errors();
 }

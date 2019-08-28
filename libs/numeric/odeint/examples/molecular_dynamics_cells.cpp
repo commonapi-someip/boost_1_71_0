@@ -22,6 +22,7 @@
 #include <algorithm>
 #include <tuple>
 #include <iostream>
+#include <random>
 
 #include <boost/range/algorithm/for_each.hpp>
 #include <boost/range/algorithm/sort.hpp>
@@ -140,8 +141,10 @@ public:
 
 
 
-    struct transform_functor : public std::unary_function< size_t , size_t >
+    struct transform_functor
     {
+        typedef size_t argument_type;
+        typedef size_t result_type;
         hash_vector const* m_index;
         transform_functor( hash_vector const& index ) : m_index( &index ) { }
         size_t operator()( size_t i ) const { return (*m_index)[i]; }

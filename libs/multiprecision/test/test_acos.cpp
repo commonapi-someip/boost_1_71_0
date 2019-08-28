@@ -2,7 +2,7 @@
 //  Copyright Christopher Kormanyos 2002 - 2011.
 //  Copyright 2011 John Maddock. Distributed under the Boost
 //  Software License, Version 1.0. (See accompanying file
-//  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_
+//  LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt
 //
 // This work is based on an earlier work:
 // "Algorithm 910: A Portable C++ Multiple-Precision System for Special-Function Calculations",
@@ -95,7 +95,7 @@ void test()
    }
    std::cout << "Max error was: " << max_err << std::endl;
 #ifdef TEST_CPP_BIN_FLOAT
-   BOOST_TEST(max_err < 120);
+   BOOST_TEST(max_err < 320);
 #else
    BOOST_TEST(max_err < 60);
 #endif
@@ -131,8 +131,8 @@ int main()
    test<boost::multiprecision::number<boost::multiprecision::cpp_dec_float<62> > >();
    test<boost::multiprecision::number<boost::multiprecision::cpp_dec_float<61, long long> > >();
    test<boost::multiprecision::number<boost::multiprecision::cpp_dec_float<60, long long> > >();
-   test<boost::multiprecision::number<boost::multiprecision::cpp_dec_float<59, long long, std::allocator<void> > > >();
-   test<boost::multiprecision::number<boost::multiprecision::cpp_dec_float<58, long long, std::allocator<void> > > >();
+   test<boost::multiprecision::number<boost::multiprecision::cpp_dec_float<59, long long, std::allocator<char> > > >();
+   test<boost::multiprecision::number<boost::multiprecision::cpp_dec_float<58, long long, std::allocator<char> > > >();
 #endif
 #endif
 #ifdef TEST_FLOAT128
@@ -140,6 +140,7 @@ int main()
 #endif
 #ifdef TEST_CPP_BIN_FLOAT
    test<boost::multiprecision::cpp_bin_float_50>();
+   test<boost::multiprecision::number<boost::multiprecision::cpp_bin_float<35, boost::multiprecision::digit_base_10, std::allocator<char>, boost::long_long_type> > >();
 #endif
    return boost::report_errors();
 }

@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////
 //  Copyright 2012 John Maddock. Distributed under the Boost
 //  Software License, Version 1.0. (See accompanying file
-//  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_
+//  LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt
 
 //
 // Compare arithmetic results using fixed_int to GMP results.
@@ -11,13 +11,11 @@
 #  define _SCL_SECURE_NO_WARNINGS
 #endif
 
+//[mixed_eg
 #include <boost/multiprecision/cpp_int.hpp>
 
 int main()
 {
-   //[mixed_eg
-   //=#include <boost/multiprecision/cpp_int.hpp>
-
    using namespace boost::multiprecision;
 
    boost::uint64_t i = (std::numeric_limits<boost::uint64_t>::max)();
@@ -37,10 +35,9 @@ int main()
    ui128 = (std::numeric_limits<uint128_t>::max)();
    std::cout << std::hex << std::showbase << multiply(ui256, ui128, ui128) << std::endl;
 
-   //]
-
    return 0;
 }
+//]
 
 /* 
 

@@ -1,5 +1,5 @@
 /*
- *          Copyright Andrey Semashev 2007 - 2014.
+ *          Copyright Andrey Semashev 2007 - 2015.
  * Distributed under the Boost Software License, Version 1.0.
  *    (See accompanying file LICENSE_1_0.txt or copy at
  *          http://www.boost.org/LICENSE_1_0.txt)
@@ -16,6 +16,11 @@
  */
 
 // #define BOOST_LOG_DYN_LINK 1
+
+#include <boost/config.hpp>
+#if !defined(BOOST_WINDOWS)
+#define BOOST_LOG_USE_NATIVE_SYSLOG
+#endif
 
 #include <stdexcept>
 #include <string>
@@ -68,8 +73,10 @@ int main(int argc, char* argv[])
 
         sink->locked_backend()->set_severity_mapper(mapping);
 
+#if !defined(BOOST_LOG_NO_ASIO)
         // Set the remote address to sent syslog messages to
         sink->locked_backend()->set_target_address("localhost");
+#endif
 
         // Add the sink to the core
         logging::core::get()->add_sink(sink);

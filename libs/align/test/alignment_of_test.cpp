@@ -1,104 +1,91 @@
 /*
- Copyright (c) 2014 Glen Joseph Fernandes
- glenfe at live dot com
+Copyright 2014 Glen Joseph Fernandes
+(glenjofe@gmail.com)
 
- Distributed under the Boost Software License,
- Version 1.0. (See accompanying file LICENSE_1_0.txt
- or copy at http://boost.org/LICENSE_1_0.txt)
+Distributed under the Boost Software License, Version 1.0.
+(http://www.boost.org/LICENSE_1_0.txt)
 */
-#include <boost/config.hpp>
 #include <boost/align/alignment_of.hpp>
 #include <boost/core/lightweight_test.hpp>
+#include <boost/config.hpp>
 #include <cstddef>
 
 template<class T>
-struct no_ref {
+struct remove_reference {
     typedef T type;
 };
 
 template<class T>
-struct no_ref<T&> {
+struct remove_reference<T&> {
     typedef T type;
 };
 
 #if !defined(BOOST_NO_CXX11_RVALUE_REFERENCES)
 template<class T>
-struct no_ref<T&&> {
+struct remove_reference<T&&> {
     typedef T type;
 };
 #endif
 
 template<class T>
-struct no_extents {
+struct remove_all_extents {
     typedef T type;
 };
 
 template<class T>
-struct no_extents<T[]> {
-    typedef typename no_extents<T>::type type;
+struct remove_all_extents<T[]> {
+    typedef typename remove_all_extents<T>::type type;
 };
 
 template<class T, std::size_t N>
-struct no_extents<T[N]> {
-    typedef typename no_extents<T>::type type;
+struct remove_all_extents<T[N]> {
+    typedef typename remove_all_extents<T>::type type;
 };
 
 template<class T>
-struct no_const {
+struct remove_cv {
     typedef T type;
 };
 
 template<class T>
-struct no_const<const T> {
+struct remove_cv<const T> {
     typedef T type;
 };
 
 template<class T>
-struct no_volatile {
+struct remove_cv<volatile T> {
     typedef T type;
 };
 
 template<class T>
-struct no_volatile<volatile T> {
+struct remove_cv<const volatile T> {
     typedef T type;
 };
 
 template<class T>
-struct no_cv {
-    typedef typename no_volatile<typename
-        no_const<T>::type>::type type;
+struct offset_value {
+    char value;
+    typename remove_cv<typename remove_all_extents<typename
+        remove_reference<T>::type>::type>::type object;
 };
 
 template<class T>
-struct padded {
-    char unit;
-    typename no_cv<typename no_extents<typename
-        no_ref<T>::type>::type>::type object;
-};
-
-template<class T>
-std::ptrdiff_t offset()
+void test_type()
 {
-    static padded<T> p = padded<T>();
-    return (char*)&p.object - &p.unit;
-}
-
-template<class T>
-void test_impl()
-{
-    std::size_t result = boost::alignment::
-        alignment_of<T>::value;
-    BOOST_TEST_EQ(result, offset<T>());
+    enum {
+        N = boost::alignment::alignment_of<T>::value
+    };
+    BOOST_TEST(offsetof(offset_value<T>, object) == N);
 }
 
 template<class T>
 void test_reference()
 {
-    test_impl<T>();
-    test_impl<T&>();
+    test_type<T>();
+    test_type<T&>();
 
 #if !defined(BOOST_NO_CXX11_RVALUE_REFERENCES)
-    test_impl<T&&>();
+    test_type<T&&>();
 #endif
 }
 
@@ -107,7 +94,7 @@ void test_array()
 {
     test_reference<T>();
     test_reference<T[2]>();
-    test_impl<T[]>();
+    test_type<T[]>();
 }
 
 template<class T>
@@ -120,18 +107,12 @@ void test_cv()
 }
 
 template<class T>
-struct W1 {
+struct Struct {
     T t;
 };
 
 template<class T>
-class W2 {
-public:
-    T t;
-};
-
-template<class T>
-union W3 {
+union Union {
     T t;
 };
 
@@ -139,9 +120,8 @@ template<class T>
 void test()
 {
     test_cv<T>();
-    test_cv<W1<T> >();
-    test_cv<W2<T> >();
-    test_cv<W3<T> >();
+    test_cv<Struct<T> >();
+    test_cv<Union<T> >();
 }
 
 void test_integral()
@@ -202,11 +182,11 @@ void test_pointer()
 void test_member_pointer()
 {
     test<int X::*>();
-    test<int (X::*)()>();
+    test<int(X::*)()>();
 }
 
 enum E {
-    v = 1
+    V = 1
 };
 
 void test_enum()

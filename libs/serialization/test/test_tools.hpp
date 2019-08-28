@@ -19,7 +19,6 @@
 
 //  See http://www.boost.org for updates, documentation, and revision history.
 
-#include <cstddef> // size_t
 #include <boost/config.hpp>
 #ifndef BOOST_NO_EXCEPTION_STD_NAMESPACE
     #include <exception>
@@ -77,14 +76,12 @@ namespace boost {
 namespace archive {
     const char * test_filename(const char * dir = NULL, char *fname = NULL){
         static char ibuffer [512];
-        std::size_t i;
         ibuffer[0] = '\0';
         if(NULL == dir){
             dir = boost::archive::tmpdir();
         }
         STRCPY(ibuffer, dir);
         std::strcat(ibuffer, "/");
-        i = std::strlen(ibuffer);
         if(NULL == fname){
             char old_dir[256];
             _getcwd(old_dir, sizeof(old_dir) - 1);
@@ -157,7 +154,7 @@ namespace archive {
 #endif // defined(__hpux)
 #endif // defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
 
-#include <boost/detail/lightweight_test.hpp>
+#include <boost/core/lightweight_test.hpp>
 
 #define BOOST_CHECK( P ) \
     BOOST_TEST( (P) )
@@ -196,11 +193,11 @@ int test_main(int argc, char * argv[]);
 
 int
 main(int argc, char * argv[]){
-    
-    boost::serialization::singleton_module::lock();
+    boost::serialization::get_singleton_module().lock();
 
+    int retval = 1;
     BOOST_TRY{
-        test_main(argc, argv);
+        retval = test_main(argc, argv);
     }
     #ifndef BOOST_NO_EXCEPTION_STD_NAMESPACE
         BOOST_CATCH(const std::exception & e){
@@ -212,9 +209,12 @@ main(int argc, char * argv[]){
     }
     BOOST_CATCH_END
 
-    boost::serialization::singleton_module::unlock();
+    boost::serialization::get_singleton_module().unlock();
 
-    return boost::report_errors();
+    int error_count = boost::report_errors();
+    if(error_count > 0)
+        retval = error_count;
+    return retval;
 }
 
 // the following is to ensure that when one of the libraries changes
@@ -225,6 +225,12 @@ main(int argc, char * argv[]){
 #include "binary_archive.hpp"
 #include "xml_archive.hpp"
 #include "xml_warchive.hpp"
+
+#include "polymorphic_text_archive.hpp"
+#include "polymorphic_text_warchive.hpp"
+#include "polymorphic_binary_archive.hpp"
+#include "polymorphic_xml_archive.hpp"
+#include "polymorphic_xml_warchive.hpp"
 */
 
 /////////////////////////////////////////////

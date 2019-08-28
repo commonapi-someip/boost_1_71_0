@@ -1,6 +1,6 @@
 /* Boost.Flyweight basic test template.
  *
- * Copyright 2006-2014 Joaquin M Lopez Munoz.
+ * Copyright 2006-2019 Joaquin M Lopez Munoz.
  * Distributed under the Boost Software License, Version 1.0.
  * (See accompanying file LICENSE_1_0.txt or copy at
  * http://www.boost.org/LICENSE_1_0.txt)
@@ -26,6 +26,14 @@
 
 #if !defined(BOOST_NO_CXX11_RVALUE_REFERENCES)
 #include <utility>
+#endif
+
+#if !defined(BOOST_FLYWEIGHT_DISABLE_HASH_SUPPORT)
+#include <boost/functional/hash.hpp>
+
+#if !defined(BOOST_NO_CXX11_HDR_FUNCTIONAL)
+#include <functional>
+#endif
 #endif
 
 #define LENGTHOF(array) (sizeof(array)/sizeof((array)[0]))
@@ -60,7 +68,14 @@ void test_basic_template(
     BOOST_TEST(f2==cr2);
 #endif
 
-    f1=f1;
+#if !defined(BOOST_NO_CXX11_UNIFIED_INITIALIZATION_SYNTAX)
+    /* testcase for https://svn.boost.org/trac/boost/ticket/10439 */
+
+    Flyweight f3={};
+    BOOST_TEST(f3==f2);
+#endif
+
+    f1=((void)0,f1); /* self assignment warning */
     BOOST_TEST(f1==f1);
 
     c1=f2;
@@ -97,6 +112,21 @@ void test_basic_template(
     std::ostringstream oss2;
     oss2<<f1.get();
     BOOST_TEST(oss1.str()==oss2.str());
+
+#if !defined(BOOST_FLYWEIGHT_DISABLE_HASH_SUPPORT)
+
+    /* hash support */
+
+    BOOST_TEST(boost::hash<Flyweight>()(f1)==boost::hash<Flyweight>()(c1));
+    BOOST_TEST(boost::hash<Flyweight>()(f1)==
+               boost::hash<const value_type*>()(&f1.get()));
+
+#if !defined(BOOST_NO_CXX11_HDR_FUNCTIONAL)
+    BOOST_TEST(std::hash<Flyweight>()(f1)==std::hash<Flyweight>()(c1));
+    BOOST_TEST(std::hash<Flyweight>()(f1)==
+               std::hash<const value_type*>()(&f1.get()));
+#endif
+#endif
   }
 }
 
@@ -263,6 +293,7 @@ void test_basic_template(BOOST_EXPLICIT_TEMPLATE_TYPE(FlyweightSpecifier))
   }catch(const throwing_value_exception&){}
   try{
     throwing_flyweight fw=throwing_flyweight(throwing_value());
+    (void)fw;
   }catch(const throwing_value_exception&){}
 #endif
 

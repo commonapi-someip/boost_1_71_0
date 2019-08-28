@@ -1,5 +1,5 @@
 /*
- *          Copyright Andrey Semashev 2007 - 2014.
+ *          Copyright Andrey Semashev 2007 - 2015.
  * Distributed under the Boost Software License, Version 1.0.
  *    (See accompanying file LICENSE_1_0.txt or copy at
  *          http://www.boost.org/LICENSE_1_0.txt)
@@ -17,6 +17,7 @@
  * http://stackoverflow.com/questions/1023306/finding-current-executables-path-without-proc-self-exe
  */
 
+#include <boost/log/detail/config.hpp>
 #include <climits> // PATH_MAX
 #include <boost/log/attributes/current_process_name.hpp>
 #include <boost/filesystem/path.hpp>
@@ -27,9 +28,6 @@
 
 #if defined(BOOST_WINDOWS)
 
-#define WIN32_LEAN_AND_MEAN
-
-#include "windows_version.hpp"
 #include <windows.h>
 #include <boost/log/detail/header.hpp>
 

@@ -38,7 +38,7 @@ __debug = None
 def debug():
     global __debug
     if __debug is None:
-        __debug = "--debug-configuration" in bjam.variable("ARGV")        
+        __debug = "--debug-configuration" in bjam.variable("ARGV")
     return __debug
 
 feature.extend('toolset', ['gcc'])
@@ -69,9 +69,9 @@ generators.override('gcc.searched-lib-generator', 'searched-lib-generator')
 #     libxxx.dll.a import library
 #
 # Note: user can always override by using the <tag>@rule
-#       This settings have been choosen, so that mingw
+#       This settings have been chosen, so that mingw
 #       is in line with msvc naming conventions. For
-#       cygwin the cygwin naming convention has been choosen.
+#       cygwin the cygwin naming convention has been chosen.
 
 # Make the "o" suffix used for gcc toolset on all
 # platforms
@@ -103,11 +103,13 @@ def init(version = None, command = None, options = None):
     #   The command.
     command = to_seq(common.get_invocation_command('gcc', 'g++', command))
     #   The root directory of the tool install.
-    root = feature.get_values('<root>', options) ;
+    root = feature.get_values('<root>', options)
+    root = root[0] if root else ''
     #   The bin directory where to find the command to execute.
     bin = None
     #   The flavor of compiler.
     flavor = feature.get_values('<flavor>', options)
+    flavor = flavor[0] if flavor else ''
     #   Autodetect the root and bin dir if not given.
     if command:
         if not bin:
@@ -155,7 +157,7 @@ def init(version = None, command = None, options = None):
     if command:
         # On multilib 64-bit boxes, there are both 32-bit and 64-bit libraries
         # and all must be added to LD_LIBRARY_PATH. The linker will pick the
-        # right onces. Note that we don't provide a clean way to build 32-bit
+        # right ones. Note that we don't provide a clean way to build 32-bit
         # binary with 64-bit compiler, but user can always pass -m32 manually.
         lib_path = [os.path.join(root, 'bin'),
                     os.path.join(root, 'lib'),
@@ -176,6 +178,13 @@ def init(version = None, command = None, options = None):
     if debug():
         print 'notice: using gcc archiver ::', condition, '::', archiver
 
+    # - Ranlib
+    ranlib = common.get_invocation_command('gcc',
+            'ranlib', feature.get_values('<ranlib>', options), [bin], path_last=True)
+    toolset.flags('gcc.archive', '.RANLIB', condition, [ranlib])
+    if debug():
+        print 'notice: using gcc archiver ::', condition, '::', ranlib
+
     # - The resource compiler.
     rc_command = common.get_invocation_command_nodefault('gcc',
             'windres', feature.get_values('<rc>', options), [bin], path_last=True)
@@ -191,7 +200,7 @@ def init(version = None, command = None, options = None):
         # objects, so configure that.
         rc_command = common.get_invocation_command('gcc', 'as', [], [bin], path_last=True)
         rc_type = 'null'
-    rc.configure(rc_command, condition, '<rc-type>' + rc_type)
+    rc.configure([rc_command], condition, ['<rc-type>' + rc_type])
 
 ###if [ os.name ] = NT
 ###{
@@ -202,6 +211,8 @@ def init(version = None, command = None, options = None):
 
 #FIXME: when register_c_compiler is moved to
 # generators, these should be updated
+builtin.register_c_compiler('gcc.compile.c++.preprocess', ['CPP'], ['PREPROCESSED_CPP'], ['<toolset>gcc'])
+builtin.register_c_compiler('gcc.compile.c.preprocess', ['C'], ['PREPROCESSED_C'], ['<toolset>gcc'])
 builtin.register_c_compiler('gcc.compile.c++', ['CPP'], ['OBJ'], ['<toolset>gcc'])
 builtin.register_c_compiler('gcc.compile.c', ['C'], ['OBJ'], ['<toolset>gcc'])
 builtin.register_c_compiler('gcc.compile.asm', ['ASM'], ['OBJ'], ['<toolset>gcc'])
@@ -326,7 +337,7 @@ flags('gcc.compile', 'INCLUDES', [], ['<include>'])
 
 engine = get_manager().engine()
 
-engine.register_action('gcc.compile.c++.pch', 
+engine.register_action('gcc.compile.c++.pch',
     '"$(CONFIG_COMMAND)" -x c++-header $(OPTIONS) -D$(DEFINES) -I"$(INCLUDES)" -c -o "$(<)" "$(>)"')
 
 engine.register_action('gcc.compile.c.pch',
@@ -353,7 +364,7 @@ def gcc_compile_c(targets, sources, properties):
     engine.set_target_variable (targets, 'LANG', '-x c')
     #}
     engine.add_dependency(targets, bjam.call('get-target-variable', targets, 'PCH_FILE'))
-    
+
 engine.register_action(
     'gcc.compile.c++',
     '"$(CONFIG_COMMAND)" $(LANG) -ftemplate-depth-128 $(OPTIONS) ' +
@@ -368,6 +379,24 @@ engine.register_action(
         '-I"$(PCH_FILE:D)" -I"$(INCLUDES)" -c -o "$(<)" "$(>)"',
     function=gcc_compile_c,
     bound_list=['PCH_FILE'])
+
+engine.register_action(
+    'gcc.compile.c++.preprocess',
+    function=gcc_compile_cpp,
+    bound_list=['PCH_FILE'],
+    command="""
+    $(CONFIG_COMMAND) $(LANG) -ftemplate-depth-$(TEMPLATE_DEPTH) $(OPTIONS) $(USER_OPTIONS) -D$(DEFINES) -I"$(PCH_FILE:D)" -I"$(INCLUDES)" "$(>:W)" -E >"$(<:W)"
+    """
+)
+
+engine.register_action(
+    'gcc.compile.c.preprocess',
+    function=gcc_compile_c,
+    bound_list=['PCH_FILE'],
+    command="""
+    $(CONFIG_COMMAND) $(LANG) $(OPTIONS) $(USER_OPTIONS) -D$(DEFINES) -I"$(PCH_FILE:D)" -I"$(INCLUDES)" "$(>)" -E >$(<)
+    """
+)
 
 def gcc_compile_asm(targets, sources, properties):
     get_manager().engine().set_target_variable(targets, 'LANG', '-x assembler-with-cpp')
@@ -639,7 +668,9 @@ def gcc_archive(targets, sources, properties):
 # The letter 'c' suppresses the warning in case the archive does not exists yet.
 # That warning is produced only on some platforms, for whatever reasons.
 engine.register_action('gcc.archive',
-                       '"$(.AR)" $(AROPTIONS) rc "$(<)" "$(>)"',
+                       '''"$(.AR)" $(AROPTIONS) rc "$(<)" "$(>)"
+                       "$(.RANLIB)" "$(<)"
+                       ''',
                        function=gcc_archive,
                        flags=['piecemeal'])
 
@@ -677,6 +708,9 @@ elif bjam.variable('UNIX'):
     elif host_os_name == 'BeOS':
         # BeOS has no threading options, don't set anything here.
         pass
+    elif host_os_name == 'Haiku':
+        flags('gcc', 'OPTIONS', ['<threading>multi'], ['-lroot'])
+        # there is no -lrt on Haiku, and -pthread is implicit
     elif host_os_name.endswith('BSD'):
         flags('gcc', 'OPTIONS', ['<threading>multi'], ['-pthread'])
         # there is no -lrt on BSD
@@ -777,8 +811,7 @@ cpu_flags('gcc', 'OPTIONS', 'x86', 'atom', ['-march=atom'])
 # Sparc
 flags('gcc', 'OPTIONS', ['<architecture>sparc/<address-model>32'], ['-m32'])
 flags('gcc', 'OPTIONS', ['<architecture>sparc/<address-model>64'], ['-m64'])
-cpu_flags('gcc', 'OPTIONS', 'sparc', 'c3', ['-mcpu=c3'], default=True)
-cpu_flags('gcc', 'OPTIONS', 'sparc', 'v7', ['-mcpu=v7'])
+cpu_flags('gcc', 'OPTIONS', 'sparc', 'v7', ['-mcpu=v7'], default=True)
 cpu_flags('gcc', 'OPTIONS', 'sparc', 'cypress', ['-mcpu=cypress'])
 cpu_flags('gcc', 'OPTIONS', 'sparc', 'v8', ['-mcpu=v8'])
 cpu_flags('gcc', 'OPTIONS', 'sparc', 'supersparc', ['-mcpu=supersparc'])
@@ -827,7 +860,11 @@ cpu_flags('gcc', 'OPTIONS', 'power', 'rios1', ['-mcpu=rios1'])
 cpu_flags('gcc', 'OPTIONS', 'power', 'rios2', ['-mcpu=rios2'])
 cpu_flags('gcc', 'OPTIONS', 'power', 'rsc', ['-mcpu=rsc'])
 cpu_flags('gcc', 'OPTIONS', 'power', 'rs64a', ['-mcpu=rs64'])
+cpu_flags('gcc', 'OPTIONS', 's390x',  'z196', ['-march=z196'])
+cpu_flags('gcc', 'OPTIONS', 's390x',  'zEC12', ['-march=zEC12'])
+cpu_flags('gcc', 'OPTIONS', 's390x',  'z13', ['-march=z13'])
+cpu_flags('gcc', 'OPTIONS', 's390x',  'z14', ['-march=z14'])
 # AIX variant of RS/6000 & PowerPC
 flags('gcc', 'OPTIONS', ['<architecture>power/<address-model>32/<target-os>aix'], ['-maix32'])
 flags('gcc', 'OPTIONS', ['<architecture>power/<address-model>64/<target-os>aix'], ['-maix64'])
-flags('gcc', 'AROPTIONS', ['<architecture>power/<address-model>64/<target-os>aix'], ['-X 64'])
+flags('gcc', 'AROPTIONS', ['<architecture>power/<address-model>64/<target-os>aix'], ['-X64'])

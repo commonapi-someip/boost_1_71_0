@@ -1,7 +1,7 @@
 //  windows_attributes  ----------------------------------------------------------------//
 
 //  Copyright Beman Dawes 2010
-   
+
 //  Distributed under the Boost Software License, Version 1.0.
 //  See http://www.boost.org/LICENSE_1_0.txt
 
@@ -14,13 +14,7 @@
 //--------------------------------------------------------------------------------------//
 
 #include <boost/filesystem.hpp>
-
-#ifndef BOOST_LIGHTWEIGHT_MAIN
-#  include <boost/test/prg_exec_monitor.hpp>
-#else
-#  include <boost/detail/lightweight_main.hpp>
-#endif
-
+#include <boost/detail/lightweight_main.hpp>
 #include <windows.h>
 #include <map>
 #include <utility>
@@ -89,8 +83,8 @@ int cpp_main( int argc, char* argv[])
 
   fs::file_status stat = fs::status(argv[1]);
 
-  const char* types[] = 
-    { 
+  const char* types[] =
+    {
     "status_error",
     "file_not_found",
     "regular_file",

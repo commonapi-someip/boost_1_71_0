@@ -1,9 +1,10 @@
 [/============================================================================
   Boost.Geometry (aka GGL, Generic Geometry Library)
 
-  Copyright (c) 2009-2012 Barend Gehrels, Amsterdam, the Netherlands.
-  Copyright (c) 2009-2012 Mateusz Loskot, London, UK.
-  Copyright (c) 2009-2012 Bruno Lalande, Paris, France.
+  Copyright (c) 2009-2019 Barend Gehrels, Amsterdam, the Netherlands.
+  Copyright (c) 2009-2019 Mateusz Loskot, London, UK.
+  Copyright (c) 2009-2019 Bruno Lalande, Paris, France.
+  Copyright (c) 2011-2019 Adam Wulkiewicz, Lodz, Poland.
 
   Use, modification and distribution is subject to the Boost Software License,
   Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
@@ -12,8 +13,8 @@
 
 [library Geometry
     [quickbook 1.5]
-    [authors [Gehrels, Barend], [Lalande, Bruno], [Loskot, Mateusz], [Wulkiewicz, Adam], [Karavelas, Menelaos]]
-    [copyright 2009-2014 Barend Gehrels, Bruno Lalande, Mateusz Loskot, Adam Wulkiewicz, Oracle and/or its affiliates]
+    [authors [Gehrels, Barend], [Lalande, Bruno], [Loskot, Mateusz], [Wulkiewicz, Adam], [Karavelas, Menelaos], [Fisikopoulos, Vissarion]]
+    [copyright 2009-2019 Barend Gehrels, Bruno Lalande, Mateusz Loskot, Adam Wulkiewicz, Oracle and/or its affiliates]
     [purpose Documentation of Boost.Geometry library]
     [license
         Distributed under the Boost Software License, Version 1.0.
@@ -113,7 +114,10 @@ Boost.Geometry contains contributions by:
 * Federico Fern\u00E1ndez (preliminary version of R-tree spatial index)
 * Karsten Ahnert (patch for cross-track distance)
 * Mats Taraldsvik (documentation: adapting a legacy model)
+* Matt Amos (fixes for point_on_surface)
 * Samuel Debionne (variant support for distance, assign, crosses, intersection, ...)
+* Adeel Ahmad (Karney's solution of direct and inverse geodesic problems)
+* Yaghyavardhan Singh Khangarot (discrete Frechet and Hausdorff distance)
 
 [include imports.qbk]
 
@@ -129,12 +133,10 @@ Boost.Geometry contains contributions by:
 
 [include reference.qbk]
 
-[section Indexes] 
 [include matrix.qbk]
-[section Alphabetical Index]
+[section Reference Alphabetical Index]
 '''<index><title/></index>'''
 [endsect]
-[endsect] 
 
 [section Examples] 
 [include example_adapting_a_legacy_geometry_object_model.qbk]

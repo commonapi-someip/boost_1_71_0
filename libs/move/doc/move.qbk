@@ -18,10 +18,19 @@
     ]
 ]
 
-[important To be able to use containers of movable-only  values you will need to use containers
+[important To be able to use containers of movable-only values in C++03 mode you will need to use containers
 supporting move semantics, like [*Boost.Container] containers]
 
-[note Tested compilers: MSVC-7.1, 8.0, 9.0, GCC 4.3-MinGW in C++03 and C++0x modes, Intel 10.1]
+[section:tested_compilers Tested compilers]
+
+[*Boost.Move] has been tested in the following compilers/platforms:
+
+*  Visual C++ >= 7.1.
+*  GCC >= 4.1.
+
+[warning GCC < 4.3 and MSVC < 9.0 are deprecated and will be removed in the next version.]
+
+[endsect]
 
 [section:what_is_boost_move What is Boost.Move?]
 
@@ -153,13 +162,13 @@ some good introduction and tutorials on rvalue references in these papers:
 *  [@http://www.artima.com/cppsource/rvalue.html ['A Brief Introduction to Rvalue References]]
 *  [@http://blogs.msdn.com/vcblog/archive/2009/02/03/rvalue-references-c-0x-features-in-vc10-part-2.aspx ['Rvalue References: C++0x Features in VC10, Part 2]]
 
-When the source of the copy is known to be an `rvalue` (e.g.: a temporary object), one can avoid the
+When the source of the copy is known to be a `rvalue` (e.g.: a temporary object), one can avoid the
 potentially expensive `clone()` operation by pilfering source's pointer (no one will notice!). The move
 constructor above does exactly that, leaving the rvalue in a default constructed state. The move assignment
 operator simply does the same freeing old resources.
 
-Now when code tries to copy an rvalue `clone_ptr`, or if that code explicitly gives permission to
-consider the source of the copy an rvalue (using `boost::move`), the operation will execute much faster. 
+Now when code tries to copy a rvalue `clone_ptr`, or if that code explicitly gives permission to
+consider the source of the copy a rvalue (using `boost::move`), the operation will execute much faster. 
 
 [move_clone_ptr]
 
@@ -236,7 +245,7 @@ increased. Movable but non-copyable types can be returned by value from factory 
    data_file = create_file(/* ... */);  // No copies!
 
 In the above example, the underlying file handle is passed from object to object, as long
-as the source `file_descriptor` is an rvalue. At all times, there is still only one underlying file
+as the source `file_descriptor` is a rvalue. At all times, there is still only one underlying file
 handle, and only one `file_descriptor` owns it at a time.
 
 To write a movable but not copyable type in portable syntax, you need to follow these simple steps:
@@ -427,7 +436,7 @@ both C++03 and C++11 compilers.
 [classref boost::move_iterator move_iterator] is an iterator adaptor with the
 same behavior as the underlying iterator
 except that its dereference operator implicitly converts the value returned by the
-underlying iterator's dereference operator to an rvalue reference: `boost::move(*underlying_iterator)`
+underlying iterator's dereference operator to a rvalue reference: `boost::move(*underlying_iterator)`
 It is a read-once iterator, but can have up to random access traversal characteristics.
 
 `move_iterator` is very useful because some generic algorithms and container insertion functions
@@ -455,7 +464,7 @@ provided with this library. With regular iterator classes,
    while (first != last) *result++ = *first++;
 
 causes a range [first,last) to be copied into a range starting with result. The same code with
-result being an move insert iterator will move insert corresponding elements into the container.
+result being a move insert iterator will move insert corresponding elements into the container.
 This device allows all of the copying algorithms in the library to work in the move insert mode
 instead of the regular overwrite mode. This library offers 3 move insert iterators and their
 helper functions:
@@ -532,19 +541,26 @@ care to achieve portable and efficient code when using the library with C++03 co
 [section:emulation_limitations_base Initializing base classes]
 
 When initializing base classes in move constructors, users must
-cast the reference to a base class reference before moving it. Example:
+cast the reference to a base class reference before moving it or just
+use `BOOST_MOVE_BASE`. Example:
 
 [c++]
 
-   //Portable and efficient
    Derived(BOOST_RV_REF(Derived) x)             // Move ctor
-      : Base(boost::move(static_cast<Base&>(x))), 
-        mem_(boost::move(x.mem_)) { }
+      : Base(boost::move(static_cast<Base&>(x)))
+        //...
 
+or
+
+[c++]
+
+   Derived(BOOST_RV_REF(Derived) x)             // Move ctor
+      : Base(BOOST_MOVE_BASE(Base, x))
+        //...
 
 If casting is not performed the emulation will not move construct
-the base class, because no conversion is available from `BOOST_RV_REF(Derived)` 
-to `BOOST_RV_REF(Base)`. Without the cast we might obtain a compilation
+the base class, because no conversion is available from `BOOST_RV_REF(Derived)` to
+`BOOST_RV_REF(Base)`. Without the cast or `BOOST_MOVE_BASE` we might obtain a compilation
 error (for non-copyable types) or a less-efficient move constructor (for copyable types):
 
 [c++]
@@ -552,8 +568,8 @@ error (for non-copyable types) or a less-efficient move constructor (for copyabl
    //If Derived is copyable, then Base is copy-constructed.
    //If not, a compilation error is issued
    Derived(BOOST_RV_REF(Derived) x)             // Move ctor
-      : Base(boost::move(x)),
-        mem_(boost::move(x.mem_)) { } 
+      : Base(boost::move(x))
+        //...
 
 [endsect]
 
@@ -638,7 +654,7 @@ will get the non-const copy constructor overload, which will surely surprise use
    }
 
 This limitation forces the user to define a const version of the copy assignment,
-in all classes holding copyable and movable classes which might annoying in some cases.
+in all classes holding copyable and movable classes which might be annoying in some cases.
 
 An alternative is to implement a single `operator =()` for copyable and movable  classes
 [@http://cpp-next.com/archive/2009/08/want-speed-pass-by-value/ using "pass by value" semantics]:
@@ -653,6 +669,32 @@ An alternative is to implement a single `operator =()` for copyable and movable 
 
 However, "pass by value" is not optimal for classes (like containers, strings, etc.) that reuse resources
 (like previously allocated memory) when x is assigned from a lvalue.
+
+[endsect]
+
+[section:templated_assignment_operator Templated assignment operator in copyable and movable types]
+
+
+[import ../example/doc_template_assign.cpp]
+
+Given a movable and copyable class, if a templated assignment operator (*) is added:
+
+[template_assign_example_foo_bar]
+
+C++98 and C++11 compilers will behave different when assigning from a `[const] Foo` lvalue:
+
+[template_assign_example_main]
+
+This different behaviour is a side-effect of the move emulation that can't be easily avoided by
+[*Boost.Move]. One workaround is to SFINAE-out the templated assignment operator with `disable_if`:
+
+[c++]
+
+   template<class U> // Modified templated assignment
+   typename boost::disable_if<boost::is_same<U, Foo>, Foo&>::type
+      operator=(const U& rhs)
+   {  i = -rhs.i; return *this;  } //(2)
+
 
 [endsect]
 
@@ -751,16 +793,132 @@ and Klaus Triendl discovered how to bind const rlvalues using `class rv`.
 
 Many thanks to all boosters that have tested, reviewed and improved the library.
 
+Special thanks to:
+
+* Orson Peters, author of [@https://github.com/orlp/pdqsort Pattern-defeating quicksort (pdqsort)].
+* Andrey Astrelin, author of [@https://github.com/Mrrl/GrailSort Grail Sort].
+
 [endsect]
 
 [section:release_notes Release Notes]
 
+[section:release_notes_boost_1_71 Boost 1.71 Release]
+
+*  Fixed bugs:
+   *  [@https://github.com/boostorg/move/issues/26 Git Issue #26: ['"Invalid iterator increment/decrement in the last iteration of adaptive_sort_combine_blocks"]].
+
+[endsect]
+
+[section:release_notes_boost_1_70 Boost 1.70 Release]
+
+*  Removed support for deprecated GCC compilers.
+*  Fixed bugs:
+   *  [@https://github.com/boostorg/move/pull/23 Git Pull #23: ['"Add minimal cmake file"]].
+   *  [@https://github.com/boostorg/move/issues/25 Git Issue #25: ['"adaptive_merge is broken for iterator_traits<RandIt>::size_type != std::size_t"]].
+
+[endsect]
+
+[section:release_notes_boost_1_69 Boost 1.69 Release]
+
+*  Deprecated GCC < 4.3 and MSVC < 9.0 (Visual 2008) compilers.
+*  Fixed bugs:
+   *  [@https://github.com/boostorg/move/issues/15 Git Issue #19: ['"Compilation error with IBM xlC++ on AIX"]].
+
+[endsect]
+
+[section:release_notes_boost_1_67 Boost 1.67 Release]
+
+*  Added pdqsort and heap_sort implementations, initially as a detail, they will be official in the future once better tested.
+
+[endsect]
+
+[section:release_notes_boost_1_66 Boost 1.66 Release]
+
+*  Fixed bugs:
+   *  [@https://github.com/boostorg/move/pull/14   Git Pull  #14: ['"Workaround for bogus [-Wignored-attributes] warning on GCC 6.x/7.x"]].
+   *  [@https://github.com/boostorg/move/issues/15 Git Issue #15: ['"Incorrect merge in adaptive_merge when the number of unique items is limited"]].
+
+[endsect]
+
+
+[section:release_notes_boost_1_65 Boost 1.65 Release]
+
+*  Fixed bug:
+   *  [@https://github.com/boostorg/move/pull/11 Git Pull #11: ['"replace 'std::random_shuffle' by '::random_shuffle'"]].
+   *  [@https://github.com/boostorg/move/pull/12 Git Pull #12: ['"Adds support for MSVC ARM64 target'"]].
+
+[endsect]
+
+[section:release_notes_boost_1_64 Boost 1.64 Release]
+
+*  Fixed bug:
+   *  [@https://svn.boost.org/trac/boost/ticket/12920 #12920 ['"movelib::unique_ptr: incorrect pointer type for nested array"]].
+
+[endsect]
+
+[section:release_notes_boost_1_62 Boost 1.62 Release]
+
+*  Documented new limitations reported in Trac tickets
+   [@https://svn.boost.org/trac/boost/ticket/12194 #12194 ['"Copy assignment on moveable and copyable classes uses wrong type"]] and
+   [@https://svn.boost.org/trac/boost/ticket/12307 #12307 ['"Copy assignment from const ref handled differently in C++11/C++98"]].
+
+[endsect]
+
+[section:release_notes_boost_1_61 Boost 1.61 Release]
+
+*  Experimental: asymptotically optimal bufferless merge and sort algorithms: [funcref boost::movelib::adaptive_merge adaptive_merge]
+   and [funcref boost::movelib::adaptive_sort adaptive_sort].
+
+*  Fixed bug:
+   * [@https://svn.boost.org/trac/boost/ticket/11758 Trac #11758: ['"BOOST_MOVABLE_BUT_NOT_COPYABLE doesn't reset private access with rvalue ref version"]],
+
+[endsect]
+
+[section:release_notes_boost_1_60 Boost 1.60 Release]
+
+*  Fixed bug:
+   * [@https://svn.boost.org/trac/boost/ticket/11615 Trac #11615: ['"Boost.Move should use the qualified name for std::size_t in type_traits.hpp"]],
+
+[endsect]
+
+[section:release_notes_boost_1_59 Boost 1.59 Release]
+
+*  Changed `unique_ptr`'s converting constructor taking the source by value in C++03 compilers to allow simple conversions
+   from convertible types returned by value.
+*  Fixed bug:
+   * [@https://svn.boost.org/trac/boost/ticket/11229 Trac #11229: ['"vector incorrectly copies move-only objects using memcpy"]],
+   * [@https://svn.boost.org/trac/boost/ticket/11510 Trac #11510: ['"unique_ptr: -Wshadow warning issued"]],
+
+[endsect]
+
+[section:release_notes_boost_1_58_00 Boost 1.58 Release]
+
+*  Added [macroref BOOST_MOVE_BASE BOOST_MOVE_BASE] utility.
+*  Added [funcref boost::adl_move_swap adl_move_swap] utility.
+*  Reduced dependencies on other Boost libraries to make the library a bit more lightweight.
+*  Fixed bugs:
+   *  [@https://svn.boost.org/trac/boost/ticket/11044 Trac #11044: ['"boost::rv inherits off union, when such passed as template argument"]].
+
+[endsect]
+
+[section:release_notes_boost_1_57_00 Boost 1.57 Release]
+
+*  Added `unique_ptr` smart pointer. Thanks to Howard Hinnant for his excellent unique_ptr emulation code and testsuite.
+*  Added `move_if_noexcept` utility. Thanks to Antony Polukhin for the implementation.
+*  Fixed bugs:
+   *  [@https://svn.boost.org/trac/boost/ticket/9785 Trac #9785: ['"Compiler warning with intel icc in boost/move/core.hpp"]],
+   *  [@https://svn.boost.org/trac/boost/ticket/10460 Trac #10460: ['"Compiler error due to looser throw specifier"]],
+   *  [@https://github.com/boostorg/move/pull/3 Git Pull #3: ['"Don't delete copy constructor when rvalue references are disabled"]],
+
+[endsect]
+ 
 [section:release_notes_boost_1_56_00 Boost 1.56 Release]
 
 *  Added [macroref BOOST_MOVE_RET BOOST_MOVE_RET].
-*  Fixed bug [@https://svn.boost.org/trac/boost/ticket/9482 #9482: ['"MSVC macros not undefined in boost/move/detail/config_end.hpp"]],
-             [@https://svn.boost.org/trac/boost/ticket/9045 #9045: ['"Wrong macro name on docs"]],
-             [@https://svn.boost.org/trac/boost/ticket/8420 #8420: ['"move's is_convertible does not compile with aligned data"]].
+*  Fixed bugs:
+      *  [@https://svn.boost.org/trac/boost/ticket/9482 #9482: ['"MSVC macros not undefined in boost/move/detail/config_end.hpp"]],
+      *  [@https://svn.boost.org/trac/boost/ticket/9045 #9045: ['"Wrong macro name on docs"]],
+      *  [@https://svn.boost.org/trac/boost/ticket/8420 #8420: ['"move's is_convertible does not compile with aligned data"]].
 
 [endsect]
 

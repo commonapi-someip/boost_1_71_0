@@ -18,7 +18,7 @@
      [id odeint]
      [dirname odeint]
      [authors [Ahnert, Karsten], [Mulansky, Mario]]
-     [copyright 2009-2012 Karsten Ahnert and Mario Mulansky]
+     [copyright 2009-2015 Karsten Ahnert and Mario Mulansky]
      [category math]
      [purpose 
         Numerical integration of ordinary differential equations.
@@ -181,7 +181,7 @@
 [template sub[x]'''<subscript>'''[x]'''</subscript>''']
 [template subl[x]'''<subscript>'''__space[x]'''</subscript>''']
 
-[template github_link[url text]'''<ulink url="https://github.com/headmyshoulder/odeint-v2/tree/master/'''[url]'''" target="_blank">'''[text]'''</ulink>''']
+[template github_link[url text]'''<ulink url="https://github.com/headmyshoulder/odeint-v2/blob/master/'''[url]'''" target="_blank">'''[text]'''</ulink>''']
 [/ [template github_link[url text]'''<ulink url="../../../../../'''[url]'''" target="_blank">'''[text]'''</ulink>''']]
 
 

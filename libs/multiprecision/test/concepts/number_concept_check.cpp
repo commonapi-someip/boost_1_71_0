@@ -16,6 +16,7 @@
 #  pragma warning(disable:4503) // decorated name length exceeded, name was truncated
 #endif
 
+#include <boost/container_hash/hash.hpp>
 #include <libs/math/test/compile_test/poison.hpp>
 
 #if !defined(TEST_MPF_50) && !defined(TEST_BACKEND) && !defined(TEST_MPZ) \
@@ -169,6 +170,16 @@ void test_extra(T)
    t = frexp(t*t, &i);
    t = frexp(t, &e);
    t = frexp(t*t, &e);
+
+   t = scalbn(t, i);
+   t = scalbn(t*t, i);
+   t = scalbn(t, e);
+   t = scalbn(t*t, e);
+
+   t = logb(t);
+   t = logb(t*t);
+   e = ilogb(t);
+   e = ilogb(t*t);
 }
 
 void foo()

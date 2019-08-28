@@ -9,7 +9,7 @@
 #ifndef LIBS_BIMAP_TEST_BIMAP_TEST_HPP
 #define LIBS_BIMAP_TEST_BIMAP_TEST_HPP
 
-#if defined(_MSC_VER) && (_MSC_VER>=1200)
+#if defined(_MSC_VER)
 #pragma once
 #endif
 
@@ -24,6 +24,7 @@
 #include <boost/static_assert.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/utility.hpp>
+#include <boost/next_prior.hpp>
 
 template< class Container, class Data >
 void test_container(Container & c, const Data & d)

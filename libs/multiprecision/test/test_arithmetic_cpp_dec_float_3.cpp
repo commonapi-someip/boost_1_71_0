@@ -1,11 +1,9 @@
 ///////////////////////////////////////////////////////////////
 //  Copyright 2012 John Maddock. Distributed under the Boost
 //  Software License, Version 1.0. (See accompanying file
-//  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_
+//  LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt
 
-#ifdef _MSC_VER
-#  define _SCL_SECURE_NO_WARNINGS
-#endif
+#define NO_MIXED_OPS
 
 #include <boost/multiprecision/cpp_dec_float.hpp>
 
@@ -19,7 +17,7 @@ struct related_type<boost::multiprecision::number< boost::multiprecision::cpp_de
 
 int main()
 {
-   test<boost::multiprecision::number<boost::multiprecision::cpp_dec_float<100, long long, std::allocator<void> >, boost::multiprecision::et_on> >();
+   test<boost::multiprecision::number<boost::multiprecision::cpp_dec_float<100, long long, std::allocator<char> >, boost::multiprecision::et_on> >();
    return boost::report_errors();
 }
 

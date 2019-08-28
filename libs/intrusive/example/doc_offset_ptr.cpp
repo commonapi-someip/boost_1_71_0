@@ -59,7 +59,6 @@ class shared_memory_data
 //[doc_offset_ptr_1
 #include <boost/interprocess/managed_shared_memory.hpp>
 #include <boost/interprocess/containers/vector.hpp>
-#include <boost/interprocess/containers/list.hpp>
 #include <boost/interprocess/allocators/allocator.hpp>
 
 //Definition of the shared memory friendly intrusive list
@@ -101,7 +100,7 @@ int main()
       int checker = 0;
       for( intrusive_list_t::const_iterator it = plist->begin(), itend(plist->end())
          ; it != itend; ++it, ++checker){
-         if(it->get() != checker)   return false;
+         if(it->get() != checker)   return 1;
       }
 
       //Now delete the list and after that, the nodes

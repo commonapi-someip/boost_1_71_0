@@ -2,7 +2,7 @@
 //  Copyright Christopher Kormanyos 2002 - 2011.
 //  Copyright 2011 John Maddock. Distributed under the Boost
 //  Software License, Version 1.0. (See accompanying file
-//  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_
+//  LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt
 //
 // This work is based on an earlier work:
 // "Algorithm 910: A Portable C++ Multiple-Precision System for Special-Function Calculations",
@@ -34,6 +34,13 @@ void expected_results()
       ".*cpp_bin_float.*",           // test type(s)
       ".*(Y[nv]|y).*Random.*",       // test data group
       ".*", 2000000, 1000000);            // test function
+   add_expected_result(
+      ".*",                          // compiler
+      ".*",                          // stdlib
+      ".*",                          // platform
+      ".*mpfr_float_backend<0>.*",   // test type(s)
+      ".*(Y[nv]|y).*Random.*",       // test data group
+      ".*", 150000, 15000);             // test function
    add_expected_result(
       ".*",                          // compiler
       ".*",                          // stdlib

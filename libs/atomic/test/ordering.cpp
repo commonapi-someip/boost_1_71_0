@@ -26,24 +26,23 @@
 // Overall this yields 0.995 * 0.995 > 0.99 confidence that the
 // fences work as expected if this test program does not
 // report an error.
+
 #include <boost/atomic.hpp>
+
 #include <boost/bind.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
-#include <boost/date_time/posix_time/time_formatters.hpp>
-#include <boost/test/test_tools.hpp>
-#include <boost/test/included/test_exec_monitor.hpp>
 #include <boost/thread/thread.hpp>
 #include <boost/thread/thread_time.hpp>
 #include <boost/thread/locks.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/condition_variable.hpp>
 #include <boost/thread/barrier.hpp>
+#include <boost/core/lightweight_test.hpp>
 
 // Two threads perform the following operations:
 //
 // thread # 1        thread # 2
 // store(a, 1)       store(b, 1)
-// read(a)           read(b)
 // x = read(b)       y = read(a)
 //
 // Under relaxed memory ordering, the case (x, y) == (0, 0) is
@@ -66,12 +65,13 @@ private:
     /* insert a bit of padding to push the two variables into
     different cache lines and increase the likelihood of detecting
     a conflict */
-    char pad_[512];
+    char pad1_[512];
     boost::atomic<int> b_;
 
+    char pad2_[512];
     boost::barrier barrier_;
 
-    int vrfya1_, vrfyb1_, vrfya2_, vrfyb2_;
+    int vrfyb1_, vrfya2_;
 
     boost::atomic<bool> terminate_threads_;
     boost::atomic<int> termination_consensus_;
@@ -84,6 +84,7 @@ private:
 template<boost::memory_order store_order, boost::memory_order load_order>
 total_store_order_test<store_order, load_order>::total_store_order_test(void)
     : a_(0), b_(0), barrier_(2),
+    vrfyb1_(0), vrfya2_(0),
     terminate_threads_(false), termination_consensus_(0),
     detected_conflict_(false)
 {
@@ -123,12 +124,10 @@ total_store_order_test<store_order, load_order>::thread1fn(void)
 {
     for (;;) {
         a_.store(1, store_order);
-        int a = a_.load(load_order);
         int b = b_.load(load_order);
 
         barrier_.wait();
 
-        vrfya1_ = a;
         vrfyb1_ = b;
 
         barrier_.wait();
@@ -164,13 +163,11 @@ total_store_order_test<store_order, load_order>::thread2fn(void)
 {
     for (;;) {
         b_.store(1, store_order);
-        int b = b_.load(load_order);
         int a = a_.load(load_order);
 
         barrier_.wait();
 
         vrfya2_ = a;
-        vrfyb2_ = b;
 
         barrier_.wait();
 
@@ -224,11 +221,11 @@ test_seq_cst(void)
         total_store_order_test<boost::memory_order_relaxed, boost::memory_order_relaxed> test;
         test.run(timeout);
         if (!test.detected_conflict()) {
-            BOOST_WARN_MESSAGE(false, "Failed to detect order=seq_cst violation while ith order=relaxed -- intrinsic ordering too strong for this test");
+            std::cout << "Failed to detect order=seq_cst violation while ith order=relaxed -- intrinsic ordering too strong for this test\n";
             return;
         }
 
-        std::cout << "seq_cst violation with order=relaxed after " << boost::posix_time::to_simple_string(timeout) << "\n";
+        std::cout << "seq_cst violation with order=relaxed after " << timeout.total_microseconds() << " us\n";
 
         sum = sum + timeout.total_microseconds();
     }
@@ -243,17 +240,17 @@ test_seq_cst(void)
     /* 5.298 = 0.995 quantile of exponential distribution */
     boost::posix_time::time_duration timeout = boost::posix_time::microseconds((long)(5.298 * avg_race_time_995));
 
-    std::cout << "run seq_cst for " << boost::posix_time::to_simple_string(timeout) << "\n";
+    std::cout << "run seq_cst for " << timeout.total_microseconds() << " us\n";
 
-    total_store_order_test<boost::memory_order_seq_cst, boost::memory_order_relaxed> test;
+    total_store_order_test<boost::memory_order_seq_cst, boost::memory_order_seq_cst> test;
     test.run(timeout);
 
-    BOOST_CHECK_MESSAGE(!test.detected_conflict(), "sequential consistency");
+    BOOST_TEST(!test.detected_conflict()); // sequential consistency error
 }
 
-int test_main(int, char *[])
+int main(int, char *[])
 {
     test_seq_cst();
 
-    return 0;
+    return boost::report_errors();
 }

@@ -1,5 +1,5 @@
 /*
- *          Copyright Andrey Semashev 2007 - 2014.
+ *          Copyright Andrey Semashev 2007 - 2015.
  * Distributed under the Boost Software License, Version 1.0.
  *    (See accompanying file LICENSE_1_0.txt or copy at
  *          http://www.boost.org/LICENSE_1_0.txt)
@@ -16,10 +16,10 @@
 #ifndef BOOST_LOG_STATELESS_ALLOCATOR_HPP_INCLUDED_
 #define BOOST_LOG_STATELESS_ALLOCATOR_HPP_INCLUDED_
 
+#include <boost/log/detail/config.hpp>
 #include <cstddef>
 #include <cstdlib>
 #include <memory>
-#include <boost/log/detail/config.hpp>
 #include <boost/log/detail/header.hpp>
 
 #ifdef BOOST_HAS_PRAGMA_ONCE

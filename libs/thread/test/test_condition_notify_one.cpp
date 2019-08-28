@@ -5,6 +5,8 @@
 
 #define BOOST_THREAD_VERSION 2
 
+#define BOOST_TEST_MODULE Boost.Threads: condition_variable notify_one test suite
+
 #include <boost/thread/detail/config.hpp>
 
 #include <boost/thread/thread_only.hpp>
@@ -112,13 +114,13 @@ namespace
 
 void do_test_multiple_notify_one_calls_wakes_multiple_threads()
 {
-    boost::thread thread1(wait_for_condvar_and_increase_count);
-    boost::thread thread2(wait_for_condvar_and_increase_count);
+    boost::thread thread1(&wait_for_condvar_and_increase_count);
+    boost::thread thread2(&wait_for_condvar_and_increase_count);
 
     boost::this_thread::sleep(boost::posix_time::milliseconds(200));
     multiple_wake_cond.notify_one();
 
-    boost::thread thread3(wait_for_condvar_and_increase_count);
+    boost::thread thread3(&wait_for_condvar_and_increase_count);
 
     boost::this_thread::sleep(boost::posix_time::milliseconds(200));
     multiple_wake_cond.notify_one();
@@ -135,7 +137,7 @@ void do_test_multiple_notify_one_calls_wakes_multiple_threads()
     thread3.join();
 }
 
-void test_condition_notify_one()
+BOOST_AUTO_TEST_CASE(test_condition_notify_one)
 {
     timed_test(&do_test_condition_notify_one_wakes_from_wait, timeout_seconds, execution_monitor::use_mutex);
     timed_test(&do_test_condition_notify_one_wakes_from_wait_with_predicate, timeout_seconds, execution_monitor::use_mutex);
@@ -144,15 +146,3 @@ void test_condition_notify_one()
     timed_test(&do_test_condition_notify_one_wakes_from_relative_timed_wait_with_predicate, timeout_seconds, execution_monitor::use_mutex);
     timed_test(&do_test_multiple_notify_one_calls_wakes_multiple_threads, timeout_seconds, execution_monitor::use_mutex);
 }
-
-
-boost::unit_test::test_suite* init_unit_test_suite(int, char*[])
-{
-    boost::unit_test::test_suite* test =
-        BOOST_TEST_SUITE("Boost.Threads: condition test suite");
-
-    test->add(BOOST_TEST_CASE(&test_condition_notify_one));
-
-    return test;
-}
-

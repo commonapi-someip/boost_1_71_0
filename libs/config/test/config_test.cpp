@@ -1,4 +1,4 @@
-//  This file was automatically generated on Wed May 28 17:13:04 2014
+//  This file was automatically generated on Sun Apr 21 09:13:03 2019
 //  by libs/config/tools/generate.cpp
 //  Copyright John Maddock 2002-4.
 //  Use, modification and distribution are subject to the 
@@ -122,6 +122,16 @@ namespace boost_no_cxx11_allocator = empty_boost;
 #else
 namespace boost_no_cxx11_atomic_smart_ptr = empty_boost;
 #endif
+#ifndef BOOST_NO_CXX11_DEFAULTED_MOVES
+#include "boost_no_cxx11_defaulted_moves.ipp"
+#else
+namespace boost_no_cxx11_defaulted_moves = empty_boost;
+#endif
+#ifndef BOOST_NO_CXX11_FINAL
+#include "boost_no_cxx11_final.ipp"
+#else
+namespace boost_no_cxx11_final = empty_boost;
+#endif
 #ifndef BOOST_NO_CXX11_HDR_ARRAY
 #include "boost_no_cxx11_hdr_array.ipp"
 #else
@@ -197,15 +207,15 @@ namespace boost_no_cxx11_hdr_thread = empty_boost;
 #else
 namespace boost_no_cxx11_hdr_tuple = empty_boost;
 #endif
-#ifndef BOOST_NO_CXX11_HDR_TYPEINDEX
-#include "boost_no_cxx11_hdr_typeindex.ipp"
-#else
-namespace boost_no_cxx11_hdr_typeindex = empty_boost;
-#endif
 #ifndef BOOST_NO_CXX11_HDR_TYPE_TRAITS
 #include "boost_no_cxx11_hdr_type_traits.ipp"
 #else
 namespace boost_no_cxx11_hdr_type_traits = empty_boost;
+#endif
+#ifndef BOOST_NO_CXX11_HDR_TYPEINDEX
+#include "boost_no_cxx11_hdr_typeindex.ipp"
+#else
+namespace boost_no_cxx11_hdr_typeindex = empty_boost;
 #endif
 #ifndef BOOST_NO_CXX11_HDR_UNORDERED_MAP
 #include "boost_no_cxx11_hdr_unordered_map.ipp"
@@ -222,15 +232,30 @@ namespace boost_no_cxx11_hdr_unordered_set = empty_boost;
 #else
 namespace boost_no_cxx11_inline_namespaces = empty_boost;
 #endif
+#ifndef BOOST_NO_CXX11_NON_PUBLIC_DEFAULTED_FUNCTIONS
+#include "boost_no_cxx11_non_pub_def_fun.ipp"
+#else
+namespace boost_no_cxx11_non_public_defaulted_functions = empty_boost;
+#endif
 #ifndef BOOST_NO_CXX11_NUMERIC_LIMITS
 #include "boost_no_cxx11_numeric_limits.ipp"
 #else
 namespace boost_no_cxx11_numeric_limits = empty_boost;
 #endif
+#ifndef BOOST_NO_CXX11_POINTER_TRAITS
+#include "boost_no_cxx11_pointer_traits.ipp"
+#else
+namespace boost_no_cxx11_pointer_traits = empty_boost;
+#endif
 #ifndef BOOST_NO_CXX11_REF_QUALIFIERS
 #include "boost_no_cxx11_ref_qualifiers.ipp"
 #else
 namespace boost_no_cxx11_ref_qualifiers = empty_boost;
+#endif
+#ifndef BOOST_NO_CXX11_SFINAE_EXPR
+#include "boost_no_cxx11_sfinae_expr.ipp"
+#else
+namespace boost_no_cxx11_sfinae_expr = empty_boost;
 #endif
 #ifndef BOOST_NO_CXX11_SMART_PTR
 #include "boost_no_cxx11_smart_ptr.ipp"
@@ -242,6 +267,11 @@ namespace boost_no_cxx11_smart_ptr = empty_boost;
 #else
 namespace boost_no_cxx11_std_align = empty_boost;
 #endif
+#ifndef BOOST_NO_CXX11_THREAD_LOCAL
+#include "boost_no_cxx11_thread_local.ipp"
+#else
+namespace boost_no_cxx11_thread_local = empty_boost;
+#endif
 #ifndef BOOST_NO_CXX11_TRAILING_RESULT_TYPES
 #include "boost_no_cxx11_trailing_result_types.ipp"
 #else
@@ -251,6 +281,126 @@ namespace boost_no_cxx11_trailing_result_types = empty_boost;
 #include "boost_no_cxx11_user_lit.ipp"
 #else
 namespace boost_no_cxx11_user_defined_literals = empty_boost;
+#endif
+#ifndef BOOST_NO_CXX14_BINARY_LITERALS
+#include "boost_no_cxx14_binary_literals.ipp"
+#else
+namespace boost_no_cxx14_binary_literals = empty_boost;
+#endif
+#ifndef BOOST_NO_CXX14_CONSTEXPR
+#include "boost_no_cxx14_constexpr.ipp"
+#else
+namespace boost_no_cxx14_constexpr = empty_boost;
+#endif
+#ifndef BOOST_NO_CXX14_DECLTYPE_AUTO
+#include "boost_no_cxx14_decltype_auto.ipp"
+#else
+namespace boost_no_cxx14_decltype_auto = empty_boost;
+#endif
+#ifndef BOOST_NO_CXX14_DIGIT_SEPARATORS
+#include "boost_no_cxx14_digit_separator.ipp"
+#else
+namespace boost_no_cxx14_digit_separators = empty_boost;
+#endif
+#ifndef BOOST_NO_CXX14_GENERIC_LAMBDAS
+#include "boost_no_cxx14_generic_lambda.ipp"
+#else
+namespace boost_no_cxx14_generic_lambdas = empty_boost;
+#endif
+#ifndef BOOST_NO_CXX14_HDR_SHARED_MUTEX
+#include "boost_no_cxx14_hdr_shared_mutex.ipp"
+#else
+namespace boost_no_cxx14_hdr_shared_mutex = empty_boost;
+#endif
+#ifndef BOOST_NO_CXX14_INITIALIZED_LAMBDA_CAPTURES
+#include "boost_no_cxx14_lambda_capture.ipp"
+#else
+namespace boost_no_cxx14_initialized_lambda_captures = empty_boost;
+#endif
+#ifndef BOOST_NO_CXX14_AGGREGATE_NSDMI
+#include "boost_no_cxx14_member_init.ipp"
+#else
+namespace boost_no_cxx14_aggregate_nsdmi = empty_boost;
+#endif
+#ifndef BOOST_NO_CXX14_RETURN_TYPE_DEDUCTION
+#include "boost_no_cxx14_return_type_ded.ipp"
+#else
+namespace boost_no_cxx14_return_type_deduction = empty_boost;
+#endif
+#ifndef BOOST_NO_CXX14_STD_EXCHANGE
+#include "boost_no_cxx14_std_exchange.ipp"
+#else
+namespace boost_no_cxx14_std_exchange = empty_boost;
+#endif
+#ifndef BOOST_NO_CXX14_VARIABLE_TEMPLATES
+#include "boost_no_cxx14_var_templ.ipp"
+#else
+namespace boost_no_cxx14_variable_templates = empty_boost;
+#endif
+#ifndef BOOST_NO_CXX17_FOLD_EXPRESSIONS
+#include "boost_no_cxx17_fold_expressions.ipp"
+#else
+namespace boost_no_cxx17_fold_expressions = empty_boost;
+#endif
+#ifndef BOOST_NO_CXX17_HDR_OPTIONAL
+#include "boost_no_cxx17_hdr_optional.ipp"
+#else
+namespace boost_no_cxx17_hdr_optional = empty_boost;
+#endif
+#ifndef BOOST_NO_CXX17_HDR_STRING_VIEW
+#include "boost_no_cxx17_hdr_string_view.ipp"
+#else
+namespace boost_no_cxx17_hdr_string_view = empty_boost;
+#endif
+#ifndef BOOST_NO_CXX17_HDR_VARIANT
+#include "boost_no_cxx17_hdr_variant.ipp"
+#else
+namespace boost_no_cxx17_hdr_variant = empty_boost;
+#endif
+#ifndef BOOST_NO_CXX17_IF_CONSTEXPR
+#include "boost_no_cxx17_if_constexpr.ipp"
+#else
+namespace boost_no_cxx17_if_constexpr = empty_boost;
+#endif
+#ifndef BOOST_NO_CXX17_INLINE_VARIABLES
+#include "boost_no_cxx17_inline_variables.ipp"
+#else
+namespace boost_no_cxx17_inline_variables = empty_boost;
+#endif
+#ifndef BOOST_NO_CXX17_ITERATOR_TRAITS
+#include "boost_no_cxx17_iterator_traits.ipp"
+#else
+namespace boost_no_cxx17_iterator_traits = empty_boost;
+#endif
+#ifndef BOOST_NO_CXX17_STD_APPLY
+#include "boost_no_cxx17_std_apply.ipp"
+#else
+namespace boost_no_cxx17_std_apply = empty_boost;
+#endif
+#ifndef BOOST_NO_CXX17_STD_INVOKE
+#include "boost_no_cxx17_std_invoke.ipp"
+#else
+namespace boost_no_cxx17_std_invoke = empty_boost;
+#endif
+#ifndef BOOST_NO_CXX17_STRUCTURED_BINDINGS
+#include "boost_no_cxx17_structured_bindings.ipp"
+#else
+namespace boost_no_cxx17_structured_bindings = empty_boost;
+#endif
+#ifndef BOOST_NO_CXX98_BINDERS
+#include "boost_no_cxx98_binders.ipp"
+#else
+namespace boost_no_cxx98_binders = empty_boost;
+#endif
+#ifndef BOOST_NO_CXX98_FUNCTION_BASE
+#include "boost_no_cxx98_function_base.ipp"
+#else
+namespace boost_no_cxx98_function_base = empty_boost;
+#endif
+#ifndef BOOST_NO_CXX98_RANDOM_SHUFFLE
+#include "boost_no_cxx98_random_shuffle.ipp"
+#else
+namespace boost_no_cxx98_random_shuffle = empty_boost;
 #endif
 #ifndef BOOST_NO_CXX11_HDR_FUNCTIONAL
 #include "boost_no_cxx_hdr_functional.ipp"
@@ -292,25 +442,25 @@ namespace boost_no_dependent_nested_derivations = empty_boost;
 #else
 namespace boost_no_dependent_types_in_template_value_parameters = empty_boost;
 #endif
-#ifndef BOOST_NO_EXCEPTIONS
-#include "boost_no_exceptions.ipp"
-#else
-namespace boost_no_exceptions = empty_boost;
-#endif
 #ifndef BOOST_NO_EXCEPTION_STD_NAMESPACE
 #include "boost_no_excep_std.ipp"
 #else
 namespace boost_no_exception_std_namespace = empty_boost;
 #endif
-#ifndef BOOST_NO_CXX11_EXPLICIT_CONVERSION_OPERATORS
-#include "boost_no_explicit_cvt_ops.ipp"
+#ifndef BOOST_NO_EXCEPTIONS
+#include "boost_no_exceptions.ipp"
 #else
-namespace boost_no_cxx11_explicit_conversion_operators = empty_boost;
+namespace boost_no_exceptions = empty_boost;
 #endif
 #ifndef BOOST_NO_EXPLICIT_FUNCTION_TEMPLATE_ARGUMENTS
 #include "boost_no_exp_func_tem_arg.ipp"
 #else
 namespace boost_no_explicit_function_template_arguments = empty_boost;
+#endif
+#ifndef BOOST_NO_CXX11_EXPLICIT_CONVERSION_OPERATORS
+#include "boost_no_explicit_cvt_ops.ipp"
+#else
+namespace boost_no_cxx11_explicit_conversion_operators = empty_boost;
 #endif
 #ifndef BOOST_NO_CXX11_EXTERN_TEMPLATE
 #include "boost_no_extern_template.ipp"
@@ -322,6 +472,16 @@ namespace boost_no_cxx11_extern_template = empty_boost;
 #else
 namespace boost_no_fenv_h = empty_boost;
 #endif
+#ifndef BOOST_NO_CXX11_FIXED_LENGTH_VARIADIC_TEMPLATE_EXPANSION_PACKS
+#include "boost_no_fixed_len_variadic_templates.ipp"
+#else
+namespace boost_no_cxx11_fixed_length_variadic_template_expansion_packs = empty_boost;
+#endif
+#ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
+#include "boost_no_func_tmp_order.ipp"
+#else
+namespace boost_no_function_template_ordering = empty_boost;
+#endif
 #ifndef BOOST_NO_CXX11_FUNCTION_TEMPLATE_DEFAULT_ARGS
 #include "boost_no_function_template_default_args.ipp"
 #else
@@ -331,11 +491,6 @@ namespace boost_no_cxx11_function_template_default_args = empty_boost;
 #include "boost_no_function_type_spec.ipp"
 #else
 namespace boost_no_function_type_specializations = empty_boost;
-#endif
-#ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
-#include "boost_no_func_tmp_order.ipp"
-#else
-namespace boost_no_function_template_ordering = empty_boost;
 #endif
 #ifndef BOOST_NO_MS_INT64_NUMERIC_LIMITS
 #include "boost_no_i64_limits.ipp"
@@ -402,16 +557,6 @@ namespace boost_no_long_long = empty_boost;
 #else
 namespace boost_no_member_function_specializations = empty_boost;
 #endif
-#ifndef BOOST_NO_MEMBER_TEMPLATES
-#include "boost_no_mem_templates.ipp"
-#else
-namespace boost_no_member_templates = empty_boost;
-#endif
-#ifndef BOOST_NO_MEMBER_TEMPLATE_FRIENDS
-#include "boost_no_mem_templ_frnds.ipp"
-#else
-namespace boost_no_member_template_friends = empty_boost;
-#endif
 #ifndef BOOST_NO_MEMBER_TEMPLATE_KEYWORD
 #include "boost_no_mem_tem_keyword.ipp"
 #else
@@ -421,6 +566,16 @@ namespace boost_no_member_template_keyword = empty_boost;
 #include "boost_no_mem_tem_pnts.ipp"
 #else
 namespace boost_no_pointer_to_member_template_parameters = empty_boost;
+#endif
+#ifndef BOOST_NO_MEMBER_TEMPLATE_FRIENDS
+#include "boost_no_mem_templ_frnds.ipp"
+#else
+namespace boost_no_member_template_friends = empty_boost;
+#endif
+#ifndef BOOST_NO_MEMBER_TEMPLATES
+#include "boost_no_mem_templates.ipp"
+#else
+namespace boost_no_member_templates = empty_boost;
 #endif
 #ifndef BOOST_NO_NESTED_FRIENDSHIP
 #include "boost_no_nested_friendship.ipp"
@@ -442,15 +597,15 @@ namespace boost_no_cxx11_nullptr = empty_boost;
 #else
 namespace boost_no_operators_in_namespace = empty_boost;
 #endif
-#ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
-#include "boost_no_partial_spec.ipp"
-#else
-namespace boost_no_template_partial_specialization = empty_boost;
-#endif
 #ifndef BOOST_NO_PARTIAL_SPECIALIZATION_IMPLICIT_DEFAULT_ARGS
 #include "boost_no_part_spec_def_args.ipp"
 #else
 namespace boost_no_partial_specialization_implicit_default_args = empty_boost;
+#endif
+#ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
+#include "boost_no_partial_spec.ipp"
+#else
+namespace boost_no_template_partial_specialization = empty_boost;
 #endif
 #ifndef BOOST_NO_PRIVATE_IN_AGGREGATE
 #include "boost_no_priv_aggregate.ipp"
@@ -471,6 +626,11 @@ namespace boost_no_cxx11_range_based_for = empty_boost;
 #include "boost_no_raw_literals.ipp"
 #else
 namespace boost_no_cxx11_raw_literals = empty_boost;
+#endif
+#ifndef BOOST_NO_RESTRICT_REFERENCES
+#include "boost_no_restrict_references.ipp"
+#else
+namespace boost_no_restrict_references = empty_boost;
 #endif
 #ifndef BOOST_NO_UNREACHABLE_RETURN_DETECTION
 #include "boost_no_ret_det.ipp"
@@ -512,11 +672,6 @@ namespace boost_no_stringstream = empty_boost;
 #else
 namespace boost_no_cxx11_static_assert = empty_boost;
 #endif
-#ifndef BOOST_NO_STDC_NAMESPACE
-#include "boost_no_stdc_namespace.ipp"
-#else
-namespace boost_no_stdc_namespace = empty_boost;
-#endif
 #ifndef BOOST_NO_STD_ALLOCATOR
 #include "boost_no_std_allocator.ipp"
 #else
@@ -527,15 +682,15 @@ namespace boost_no_std_allocator = empty_boost;
 #else
 namespace boost_no_std_distance = empty_boost;
 #endif
-#ifndef BOOST_NO_STD_ITERATOR
-#include "boost_no_std_iterator.ipp"
-#else
-namespace boost_no_std_iterator = empty_boost;
-#endif
 #ifndef BOOST_NO_STD_ITERATOR_TRAITS
 #include "boost_no_std_iter_traits.ipp"
 #else
 namespace boost_no_std_iterator_traits = empty_boost;
+#endif
+#ifndef BOOST_NO_STD_ITERATOR
+#include "boost_no_std_iterator.ipp"
+#else
+namespace boost_no_std_iterator = empty_boost;
 #endif
 #ifndef BOOST_NO_STD_LOCALE
 #include "boost_no_std_locale.ipp"
@@ -577,10 +732,20 @@ namespace boost_no_std_wstreambuf = empty_boost;
 #else
 namespace boost_no_std_wstring = empty_boost;
 #endif
+#ifndef BOOST_NO_STDC_NAMESPACE
+#include "boost_no_stdc_namespace.ipp"
+#else
+namespace boost_no_stdc_namespace = empty_boost;
+#endif
 #ifndef BOOST_NO_SWPRINTF
 #include "boost_no_swprintf.ipp"
 #else
 namespace boost_no_swprintf = empty_boost;
+#endif
+#ifndef BOOST_NO_CXX11_LOCAL_CLASS_TEMPLATE_PARAMETERS
+#include "boost_no_tem_local_classes.ipp"
+#else
+namespace boost_no_cxx11_local_class_template_parameters = empty_boost;
 #endif
 #ifndef BOOST_NO_CXX11_TEMPLATE_ALIASES
 #include "boost_no_template_aliases.ipp"
@@ -596,11 +761,6 @@ namespace boost_no_templated_iostreams = empty_boost;
 #include "boost_no_template_template.ipp"
 #else
 namespace boost_no_template_templates = empty_boost;
-#endif
-#ifndef BOOST_NO_CXX11_LOCAL_CLASS_TEMPLATE_PARAMETERS
-#include "boost_no_tem_local_classes.ipp"
-#else
-namespace boost_no_cxx11_local_class_template_parameters = empty_boost;
 #endif
 #ifndef BOOST_NO_TWO_PHASE_NAME_LOOKUP
 #include "boost_no_two_phase_lookup.ipp"
@@ -678,6 +838,11 @@ namespace boost_has_bethreads = empty_boost;
 #else
 namespace boost_has_clock_gettime = empty_boost;
 #endif
+#ifdef BOOST_HAS_PRAGMA_DETECT_MISMATCH
+#include "boost_has_detect_mismatch.ipp"
+#else
+namespace boost_has_pragma_detect_mismatch = empty_boost;
+#endif
 #ifdef BOOST_HAS_DIRENT_H
 #include "boost_has_dirent_h.ipp"
 #else
@@ -687,6 +852,11 @@ namespace boost_has_dirent_h = empty_boost;
 #include "boost_has_expm1.ipp"
 #else
 namespace boost_has_expm1 = empty_boost;
+#endif
+#ifdef BOOST_HAS_FLOAT128
+#include "boost_has_float128.ipp"
+#else
+namespace boost_has_float128 = empty_boost;
 #endif
 #ifdef BOOST_HAS_FTIME
 #include "boost_has_ftime.ipp"
@@ -753,11 +923,6 @@ namespace boost_has_nrvo = empty_boost;
 #else
 namespace boost_has_partial_std_allocator = empty_boost;
 #endif
-#ifdef BOOST_HAS_PTHREADS
-#include "boost_has_pthreads.ipp"
-#else
-namespace boost_has_pthreads = empty_boost;
-#endif
 #ifdef BOOST_HAS_PTHREAD_DELAY_NP
 #include "boost_has_pthread_delay_np.ipp"
 #else
@@ -772,6 +937,11 @@ namespace boost_has_pthread_mutexattr_settype = empty_boost;
 #include "boost_has_pthread_yield.ipp"
 #else
 namespace boost_has_pthread_yield = empty_boost;
+#endif
+#ifdef BOOST_HAS_PTHREADS
+#include "boost_has_pthreads.ipp"
+#else
+namespace boost_has_pthreads = empty_boost;
 #endif
 #ifdef BOOST_HAS_RVALUE_REFS
 #include "boost_has_rvalue_refs.ipp"
@@ -812,91 +982,6 @@ namespace boost_has_stdint_h = empty_boost;
 #include "boost_has_stlp_use_facet.ipp"
 #else
 namespace boost_has_stlp_use_facet = empty_boost;
-#endif
-#ifdef BOOST_HAS_TR1_ARRAY
-#include "boost_has_tr1_array.ipp"
-#else
-namespace boost_has_tr1_array = empty_boost;
-#endif
-#ifdef BOOST_HAS_TR1_BIND
-#include "boost_has_tr1_bind.ipp"
-#else
-namespace boost_has_tr1_bind = empty_boost;
-#endif
-#ifdef BOOST_HAS_TR1_COMPLEX_OVERLOADS
-#include "boost_has_tr1_complex_over.ipp"
-#else
-namespace boost_has_tr1_complex_overloads = empty_boost;
-#endif
-#ifdef BOOST_HAS_TR1_COMPLEX_INVERSE_TRIG
-#include "boost_has_tr1_complex_trig.ipp"
-#else
-namespace boost_has_tr1_complex_inverse_trig = empty_boost;
-#endif
-#ifdef BOOST_HAS_TR1_FUNCTION
-#include "boost_has_tr1_function.ipp"
-#else
-namespace boost_has_tr1_function = empty_boost;
-#endif
-#ifdef BOOST_HAS_TR1_HASH
-#include "boost_has_tr1_hash.ipp"
-#else
-namespace boost_has_tr1_hash = empty_boost;
-#endif
-#ifdef BOOST_HAS_TR1_MEM_FN
-#include "boost_has_tr1_mem_fn.ipp"
-#else
-namespace boost_has_tr1_mem_fn = empty_boost;
-#endif
-#ifdef BOOST_HAS_TR1_RANDOM
-#include "boost_has_tr1_random.ipp"
-#else
-namespace boost_has_tr1_random = empty_boost;
-#endif
-#ifdef BOOST_HAS_TR1_REFERENCE_WRAPPER
-#include "boost_has_tr1_ref_wrap.ipp"
-#else
-namespace boost_has_tr1_reference_wrapper = empty_boost;
-#endif
-#ifdef BOOST_HAS_TR1_REGEX
-#include "boost_has_tr1_regex.ipp"
-#else
-namespace boost_has_tr1_regex = empty_boost;
-#endif
-#ifdef BOOST_HAS_TR1_RESULT_OF
-#include "boost_has_tr1_result_of.ipp"
-#else
-namespace boost_has_tr1_result_of = empty_boost;
-#endif
-#ifdef BOOST_HAS_TR1_SHARED_PTR
-#include "boost_has_tr1_shared_ptr.ipp"
-#else
-namespace boost_has_tr1_shared_ptr = empty_boost;
-#endif
-#ifdef BOOST_HAS_TR1_TUPLE
-#include "boost_has_tr1_tuple.ipp"
-#else
-namespace boost_has_tr1_tuple = empty_boost;
-#endif
-#ifdef BOOST_HAS_TR1_TYPE_TRAITS
-#include "boost_has_tr1_type_traits.ipp"
-#else
-namespace boost_has_tr1_type_traits = empty_boost;
-#endif
-#ifdef BOOST_HAS_TR1_UNORDERED_MAP
-#include "boost_has_tr1_unordered_map.ipp"
-#else
-namespace boost_has_tr1_unordered_map = empty_boost;
-#endif
-#ifdef BOOST_HAS_TR1_UNORDERED_SET
-#include "boost_has_tr1_unordered_set.ipp"
-#else
-namespace boost_has_tr1_unordered_set = empty_boost;
-#endif
-#ifdef BOOST_HAS_TR1_UTILITY
-#include "boost_has_tr1_utility.ipp"
-#else
-namespace boost_has_tr1_utility = empty_boost;
 #endif
 #ifdef BOOST_HAS_UNISTD_H
 #include "boost_has_unistd_h.ipp"
@@ -941,6 +1026,11 @@ int main( int, char *[] )
       std::cerr << "Failed test for BOOST_HAS_CLOCK_GETTIME at: " << __FILE__ << ":" << __LINE__ << std::endl;
       ++error_count;
    }
+   if(0 != boost_has_pragma_detect_mismatch::test())
+   {
+      std::cerr << "Failed test for BOOST_HAS_PRAGMA_DETECT_MISMATCH at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
    if(0 != boost_has_dirent_h::test())
    {
       std::cerr << "Failed test for BOOST_HAS_DIRENT_H at: " << __FILE__ << ":" << __LINE__ << std::endl;
@@ -949,6 +1039,11 @@ int main( int, char *[] )
    if(0 != boost_has_expm1::test())
    {
       std::cerr << "Failed test for BOOST_HAS_EXPM1 at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
+   if(0 != boost_has_float128::test())
+   {
+      std::cerr << "Failed test for BOOST_HAS_FLOAT128 at: " << __FILE__ << ":" << __LINE__ << std::endl;
       ++error_count;
    }
    if(0 != boost_has_ftime::test())
@@ -1016,11 +1111,6 @@ int main( int, char *[] )
       std::cerr << "Failed test for BOOST_HAS_PARTIAL_STD_ALLOCATOR at: " << __FILE__ << ":" << __LINE__ << std::endl;
       ++error_count;
    }
-   if(0 != boost_has_pthreads::test())
-   {
-      std::cerr << "Failed test for BOOST_HAS_PTHREADS at: " << __FILE__ << ":" << __LINE__ << std::endl;
-      ++error_count;
-   }
    if(0 != boost_has_pthread_delay_np::test())
    {
       std::cerr << "Failed test for BOOST_HAS_PTHREAD_DELAY_NP at: " << __FILE__ << ":" << __LINE__ << std::endl;
@@ -1034,6 +1124,11 @@ int main( int, char *[] )
    if(0 != boost_has_pthread_yield::test())
    {
       std::cerr << "Failed test for BOOST_HAS_PTHREAD_YIELD at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
+   if(0 != boost_has_pthreads::test())
+   {
+      std::cerr << "Failed test for BOOST_HAS_PTHREADS at: " << __FILE__ << ":" << __LINE__ << std::endl;
       ++error_count;
    }
    if(0 != boost_has_rvalue_refs::test())
@@ -1074,91 +1169,6 @@ int main( int, char *[] )
    if(0 != boost_has_stlp_use_facet::test())
    {
       std::cerr << "Failed test for BOOST_HAS_STLP_USE_FACET at: " << __FILE__ << ":" << __LINE__ << std::endl;
-      ++error_count;
-   }
-   if(0 != boost_has_tr1_array::test())
-   {
-      std::cerr << "Failed test for BOOST_HAS_TR1_ARRAY at: " << __FILE__ << ":" << __LINE__ << std::endl;
-      ++error_count;
-   }
-   if(0 != boost_has_tr1_bind::test())
-   {
-      std::cerr << "Failed test for BOOST_HAS_TR1_BIND at: " << __FILE__ << ":" << __LINE__ << std::endl;
-      ++error_count;
-   }
-   if(0 != boost_has_tr1_complex_overloads::test())
-   {
-      std::cerr << "Failed test for BOOST_HAS_TR1_COMPLEX_OVERLOADS at: " << __FILE__ << ":" << __LINE__ << std::endl;
-      ++error_count;
-   }
-   if(0 != boost_has_tr1_complex_inverse_trig::test())
-   {
-      std::cerr << "Failed test for BOOST_HAS_TR1_COMPLEX_INVERSE_TRIG at: " << __FILE__ << ":" << __LINE__ << std::endl;
-      ++error_count;
-   }
-   if(0 != boost_has_tr1_function::test())
-   {
-      std::cerr << "Failed test for BOOST_HAS_TR1_FUNCTION at: " << __FILE__ << ":" << __LINE__ << std::endl;
-      ++error_count;
-   }
-   if(0 != boost_has_tr1_hash::test())
-   {
-      std::cerr << "Failed test for BOOST_HAS_TR1_HASH at: " << __FILE__ << ":" << __LINE__ << std::endl;
-      ++error_count;
-   }
-   if(0 != boost_has_tr1_mem_fn::test())
-   {
-      std::cerr << "Failed test for BOOST_HAS_TR1_MEM_FN at: " << __FILE__ << ":" << __LINE__ << std::endl;
-      ++error_count;
-   }
-   if(0 != boost_has_tr1_random::test())
-   {
-      std::cerr << "Failed test for BOOST_HAS_TR1_RANDOM at: " << __FILE__ << ":" << __LINE__ << std::endl;
-      ++error_count;
-   }
-   if(0 != boost_has_tr1_reference_wrapper::test())
-   {
-      std::cerr << "Failed test for BOOST_HAS_TR1_REFERENCE_WRAPPER at: " << __FILE__ << ":" << __LINE__ << std::endl;
-      ++error_count;
-   }
-   if(0 != boost_has_tr1_regex::test())
-   {
-      std::cerr << "Failed test for BOOST_HAS_TR1_REGEX at: " << __FILE__ << ":" << __LINE__ << std::endl;
-      ++error_count;
-   }
-   if(0 != boost_has_tr1_result_of::test())
-   {
-      std::cerr << "Failed test for BOOST_HAS_TR1_RESULT_OF at: " << __FILE__ << ":" << __LINE__ << std::endl;
-      ++error_count;
-   }
-   if(0 != boost_has_tr1_shared_ptr::test())
-   {
-      std::cerr << "Failed test for BOOST_HAS_TR1_SHARED_PTR at: " << __FILE__ << ":" << __LINE__ << std::endl;
-      ++error_count;
-   }
-   if(0 != boost_has_tr1_tuple::test())
-   {
-      std::cerr << "Failed test for BOOST_HAS_TR1_TUPLE at: " << __FILE__ << ":" << __LINE__ << std::endl;
-      ++error_count;
-   }
-   if(0 != boost_has_tr1_type_traits::test())
-   {
-      std::cerr << "Failed test for BOOST_HAS_TR1_TYPE_TRAITS at: " << __FILE__ << ":" << __LINE__ << std::endl;
-      ++error_count;
-   }
-   if(0 != boost_has_tr1_unordered_map::test())
-   {
-      std::cerr << "Failed test for BOOST_HAS_TR1_UNORDERED_MAP at: " << __FILE__ << ":" << __LINE__ << std::endl;
-      ++error_count;
-   }
-   if(0 != boost_has_tr1_unordered_set::test())
-   {
-      std::cerr << "Failed test for BOOST_HAS_TR1_UNORDERED_SET at: " << __FILE__ << ":" << __LINE__ << std::endl;
-      ++error_count;
-   }
-   if(0 != boost_has_tr1_utility::test())
-   {
-      std::cerr << "Failed test for BOOST_HAS_TR1_UTILITY at: " << __FILE__ << ":" << __LINE__ << std::endl;
       ++error_count;
    }
    if(0 != boost_has_unistd_h::test())
@@ -1286,6 +1296,16 @@ int main( int, char *[] )
       std::cerr << "Failed test for BOOST_NO_CXX11_ATOMIC_SMART_PTR at: " << __FILE__ << ":" << __LINE__ << std::endl;
       ++error_count;
    }
+   if(0 != boost_no_cxx11_defaulted_moves::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_CXX11_DEFAULTED_MOVES at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
+   if(0 != boost_no_cxx11_final::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_CXX11_FINAL at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
    if(0 != boost_no_cxx11_hdr_array::test())
    {
       std::cerr << "Failed test for BOOST_NO_CXX11_HDR_ARRAY at: " << __FILE__ << ":" << __LINE__ << std::endl;
@@ -1361,14 +1381,14 @@ int main( int, char *[] )
       std::cerr << "Failed test for BOOST_NO_CXX11_HDR_TUPLE at: " << __FILE__ << ":" << __LINE__ << std::endl;
       ++error_count;
    }
-   if(0 != boost_no_cxx11_hdr_typeindex::test())
-   {
-      std::cerr << "Failed test for BOOST_NO_CXX11_HDR_TYPEINDEX at: " << __FILE__ << ":" << __LINE__ << std::endl;
-      ++error_count;
-   }
    if(0 != boost_no_cxx11_hdr_type_traits::test())
    {
       std::cerr << "Failed test for BOOST_NO_CXX11_HDR_TYPE_TRAITS at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
+   if(0 != boost_no_cxx11_hdr_typeindex::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_CXX11_HDR_TYPEINDEX at: " << __FILE__ << ":" << __LINE__ << std::endl;
       ++error_count;
    }
    if(0 != boost_no_cxx11_hdr_unordered_map::test())
@@ -1386,14 +1406,29 @@ int main( int, char *[] )
       std::cerr << "Failed test for BOOST_NO_CXX11_INLINE_NAMESPACES at: " << __FILE__ << ":" << __LINE__ << std::endl;
       ++error_count;
    }
+   if(0 != boost_no_cxx11_non_public_defaulted_functions::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_CXX11_NON_PUBLIC_DEFAULTED_FUNCTIONS at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
    if(0 != boost_no_cxx11_numeric_limits::test())
    {
       std::cerr << "Failed test for BOOST_NO_CXX11_NUMERIC_LIMITS at: " << __FILE__ << ":" << __LINE__ << std::endl;
       ++error_count;
    }
+   if(0 != boost_no_cxx11_pointer_traits::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_CXX11_POINTER_TRAITS at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
    if(0 != boost_no_cxx11_ref_qualifiers::test())
    {
       std::cerr << "Failed test for BOOST_NO_CXX11_REF_QUALIFIERS at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
+   if(0 != boost_no_cxx11_sfinae_expr::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_CXX11_SFINAE_EXPR at: " << __FILE__ << ":" << __LINE__ << std::endl;
       ++error_count;
    }
    if(0 != boost_no_cxx11_smart_ptr::test())
@@ -1406,6 +1441,11 @@ int main( int, char *[] )
       std::cerr << "Failed test for BOOST_NO_CXX11_STD_ALIGN at: " << __FILE__ << ":" << __LINE__ << std::endl;
       ++error_count;
    }
+   if(0 != boost_no_cxx11_thread_local::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_CXX11_THREAD_LOCAL at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
    if(0 != boost_no_cxx11_trailing_result_types::test())
    {
       std::cerr << "Failed test for BOOST_NO_CXX11_TRAILING_RESULT_TYPES at: " << __FILE__ << ":" << __LINE__ << std::endl;
@@ -1414,6 +1454,126 @@ int main( int, char *[] )
    if(0 != boost_no_cxx11_user_defined_literals::test())
    {
       std::cerr << "Failed test for BOOST_NO_CXX11_USER_DEFINED_LITERALS at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
+   if(0 != boost_no_cxx14_binary_literals::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_CXX14_BINARY_LITERALS at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
+   if(0 != boost_no_cxx14_constexpr::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_CXX14_CONSTEXPR at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
+   if(0 != boost_no_cxx14_decltype_auto::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_CXX14_DECLTYPE_AUTO at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
+   if(0 != boost_no_cxx14_digit_separators::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_CXX14_DIGIT_SEPARATORS at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
+   if(0 != boost_no_cxx14_generic_lambdas::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_CXX14_GENERIC_LAMBDAS at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
+   if(0 != boost_no_cxx14_hdr_shared_mutex::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_CXX14_HDR_SHARED_MUTEX at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
+   if(0 != boost_no_cxx14_initialized_lambda_captures::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_CXX14_INITIALIZED_LAMBDA_CAPTURES at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
+   if(0 != boost_no_cxx14_aggregate_nsdmi::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_CXX14_AGGREGATE_NSDMI at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
+   if(0 != boost_no_cxx14_return_type_deduction::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_CXX14_RETURN_TYPE_DEDUCTION at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
+   if(0 != boost_no_cxx14_std_exchange::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_CXX14_STD_EXCHANGE at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
+   if(0 != boost_no_cxx14_variable_templates::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_CXX14_VARIABLE_TEMPLATES at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
+   if(0 != boost_no_cxx17_fold_expressions::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_CXX17_FOLD_EXPRESSIONS at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
+   if(0 != boost_no_cxx17_hdr_optional::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_CXX17_HDR_OPTIONAL at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
+   if(0 != boost_no_cxx17_hdr_string_view::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_CXX17_HDR_STRING_VIEW at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
+   if(0 != boost_no_cxx17_hdr_variant::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_CXX17_HDR_VARIANT at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
+   if(0 != boost_no_cxx17_if_constexpr::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_CXX17_IF_CONSTEXPR at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
+   if(0 != boost_no_cxx17_inline_variables::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_CXX17_INLINE_VARIABLES at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
+   if(0 != boost_no_cxx17_iterator_traits::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_CXX17_ITERATOR_TRAITS at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
+   if(0 != boost_no_cxx17_std_apply::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_CXX17_STD_APPLY at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
+   if(0 != boost_no_cxx17_std_invoke::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_CXX17_STD_INVOKE at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
+   if(0 != boost_no_cxx17_structured_bindings::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_CXX17_STRUCTURED_BINDINGS at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
+   if(0 != boost_no_cxx98_binders::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_CXX98_BINDERS at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
+   if(0 != boost_no_cxx98_function_base::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_CXX98_FUNCTION_BASE at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
+   if(0 != boost_no_cxx98_random_shuffle::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_CXX98_RANDOM_SHUFFLE at: " << __FILE__ << ":" << __LINE__ << std::endl;
       ++error_count;
    }
    if(0 != boost_no_cxx11_hdr_functional::test())
@@ -1456,24 +1616,24 @@ int main( int, char *[] )
       std::cerr << "Failed test for BOOST_NO_DEPENDENT_TYPES_IN_TEMPLATE_VALUE_PARAMETERS at: " << __FILE__ << ":" << __LINE__ << std::endl;
       ++error_count;
    }
-   if(0 != boost_no_exceptions::test())
-   {
-      std::cerr << "Failed test for BOOST_NO_EXCEPTIONS at: " << __FILE__ << ":" << __LINE__ << std::endl;
-      ++error_count;
-   }
    if(0 != boost_no_exception_std_namespace::test())
    {
       std::cerr << "Failed test for BOOST_NO_EXCEPTION_STD_NAMESPACE at: " << __FILE__ << ":" << __LINE__ << std::endl;
       ++error_count;
    }
-   if(0 != boost_no_cxx11_explicit_conversion_operators::test())
+   if(0 != boost_no_exceptions::test())
    {
-      std::cerr << "Failed test for BOOST_NO_CXX11_EXPLICIT_CONVERSION_OPERATORS at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      std::cerr << "Failed test for BOOST_NO_EXCEPTIONS at: " << __FILE__ << ":" << __LINE__ << std::endl;
       ++error_count;
    }
    if(0 != boost_no_explicit_function_template_arguments::test())
    {
       std::cerr << "Failed test for BOOST_NO_EXPLICIT_FUNCTION_TEMPLATE_ARGUMENTS at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
+   if(0 != boost_no_cxx11_explicit_conversion_operators::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_CXX11_EXPLICIT_CONVERSION_OPERATORS at: " << __FILE__ << ":" << __LINE__ << std::endl;
       ++error_count;
    }
    if(0 != boost_no_cxx11_extern_template::test())
@@ -1486,6 +1646,16 @@ int main( int, char *[] )
       std::cerr << "Failed test for BOOST_NO_FENV_H at: " << __FILE__ << ":" << __LINE__ << std::endl;
       ++error_count;
    }
+   if(0 != boost_no_cxx11_fixed_length_variadic_template_expansion_packs::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_CXX11_FIXED_LENGTH_VARIADIC_TEMPLATE_EXPANSION_PACKS at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
+   if(0 != boost_no_function_template_ordering::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_FUNCTION_TEMPLATE_ORDERING at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
    if(0 != boost_no_cxx11_function_template_default_args::test())
    {
       std::cerr << "Failed test for BOOST_NO_CXX11_FUNCTION_TEMPLATE_DEFAULT_ARGS at: " << __FILE__ << ":" << __LINE__ << std::endl;
@@ -1494,11 +1664,6 @@ int main( int, char *[] )
    if(0 != boost_no_function_type_specializations::test())
    {
       std::cerr << "Failed test for BOOST_NO_FUNCTION_TYPE_SPECIALIZATIONS at: " << __FILE__ << ":" << __LINE__ << std::endl;
-      ++error_count;
-   }
-   if(0 != boost_no_function_template_ordering::test())
-   {
-      std::cerr << "Failed test for BOOST_NO_FUNCTION_TEMPLATE_ORDERING at: " << __FILE__ << ":" << __LINE__ << std::endl;
       ++error_count;
    }
    if(0 != boost_no_ms_int64_numeric_limits::test())
@@ -1566,16 +1731,6 @@ int main( int, char *[] )
       std::cerr << "Failed test for BOOST_NO_MEMBER_FUNCTION_SPECIALIZATIONS at: " << __FILE__ << ":" << __LINE__ << std::endl;
       ++error_count;
    }
-   if(0 != boost_no_member_templates::test())
-   {
-      std::cerr << "Failed test for BOOST_NO_MEMBER_TEMPLATES at: " << __FILE__ << ":" << __LINE__ << std::endl;
-      ++error_count;
-   }
-   if(0 != boost_no_member_template_friends::test())
-   {
-      std::cerr << "Failed test for BOOST_NO_MEMBER_TEMPLATE_FRIENDS at: " << __FILE__ << ":" << __LINE__ << std::endl;
-      ++error_count;
-   }
    if(0 != boost_no_member_template_keyword::test())
    {
       std::cerr << "Failed test for BOOST_NO_MEMBER_TEMPLATE_KEYWORD at: " << __FILE__ << ":" << __LINE__ << std::endl;
@@ -1584,6 +1739,16 @@ int main( int, char *[] )
    if(0 != boost_no_pointer_to_member_template_parameters::test())
    {
       std::cerr << "Failed test for BOOST_NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
+   if(0 != boost_no_member_template_friends::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_MEMBER_TEMPLATE_FRIENDS at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
+   if(0 != boost_no_member_templates::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_MEMBER_TEMPLATES at: " << __FILE__ << ":" << __LINE__ << std::endl;
       ++error_count;
    }
    if(0 != boost_no_nested_friendship::test())
@@ -1606,14 +1771,14 @@ int main( int, char *[] )
       std::cerr << "Failed test for BOOST_NO_OPERATORS_IN_NAMESPACE at: " << __FILE__ << ":" << __LINE__ << std::endl;
       ++error_count;
    }
-   if(0 != boost_no_template_partial_specialization::test())
-   {
-      std::cerr << "Failed test for BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION at: " << __FILE__ << ":" << __LINE__ << std::endl;
-      ++error_count;
-   }
    if(0 != boost_no_partial_specialization_implicit_default_args::test())
    {
       std::cerr << "Failed test for BOOST_NO_PARTIAL_SPECIALIZATION_IMPLICIT_DEFAULT_ARGS at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
+   if(0 != boost_no_template_partial_specialization::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION at: " << __FILE__ << ":" << __LINE__ << std::endl;
       ++error_count;
    }
    if(0 != boost_no_private_in_aggregate::test())
@@ -1634,6 +1799,11 @@ int main( int, char *[] )
    if(0 != boost_no_cxx11_raw_literals::test())
    {
       std::cerr << "Failed test for BOOST_NO_CXX11_RAW_LITERALS at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
+   if(0 != boost_no_restrict_references::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_RESTRICT_REFERENCES at: " << __FILE__ << ":" << __LINE__ << std::endl;
       ++error_count;
    }
    if(0 != boost_no_unreachable_return_detection::test())
@@ -1676,11 +1846,6 @@ int main( int, char *[] )
       std::cerr << "Failed test for BOOST_NO_CXX11_STATIC_ASSERT at: " << __FILE__ << ":" << __LINE__ << std::endl;
       ++error_count;
    }
-   if(0 != boost_no_stdc_namespace::test())
-   {
-      std::cerr << "Failed test for BOOST_NO_STDC_NAMESPACE at: " << __FILE__ << ":" << __LINE__ << std::endl;
-      ++error_count;
-   }
    if(0 != boost_no_std_allocator::test())
    {
       std::cerr << "Failed test for BOOST_NO_STD_ALLOCATOR at: " << __FILE__ << ":" << __LINE__ << std::endl;
@@ -1691,14 +1856,14 @@ int main( int, char *[] )
       std::cerr << "Failed test for BOOST_NO_STD_DISTANCE at: " << __FILE__ << ":" << __LINE__ << std::endl;
       ++error_count;
    }
-   if(0 != boost_no_std_iterator::test())
-   {
-      std::cerr << "Failed test for BOOST_NO_STD_ITERATOR at: " << __FILE__ << ":" << __LINE__ << std::endl;
-      ++error_count;
-   }
    if(0 != boost_no_std_iterator_traits::test())
    {
       std::cerr << "Failed test for BOOST_NO_STD_ITERATOR_TRAITS at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
+   if(0 != boost_no_std_iterator::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_STD_ITERATOR at: " << __FILE__ << ":" << __LINE__ << std::endl;
       ++error_count;
    }
    if(0 != boost_no_std_locale::test())
@@ -1741,9 +1906,19 @@ int main( int, char *[] )
       std::cerr << "Failed test for BOOST_NO_STD_WSTRING at: " << __FILE__ << ":" << __LINE__ << std::endl;
       ++error_count;
    }
+   if(0 != boost_no_stdc_namespace::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_STDC_NAMESPACE at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
    if(0 != boost_no_swprintf::test())
    {
       std::cerr << "Failed test for BOOST_NO_SWPRINTF at: " << __FILE__ << ":" << __LINE__ << std::endl;
+      ++error_count;
+   }
+   if(0 != boost_no_cxx11_local_class_template_parameters::test())
+   {
+      std::cerr << "Failed test for BOOST_NO_CXX11_LOCAL_CLASS_TEMPLATE_PARAMETERS at: " << __FILE__ << ":" << __LINE__ << std::endl;
       ++error_count;
    }
    if(0 != boost_no_cxx11_template_aliases::test())
@@ -1759,11 +1934,6 @@ int main( int, char *[] )
    if(0 != boost_no_template_templates::test())
    {
       std::cerr << "Failed test for BOOST_NO_TEMPLATE_TEMPLATES at: " << __FILE__ << ":" << __LINE__ << std::endl;
-      ++error_count;
-   }
-   if(0 != boost_no_cxx11_local_class_template_parameters::test())
-   {
-      std::cerr << "Failed test for BOOST_NO_CXX11_LOCAL_CLASS_TEMPLATE_PARAMETERS at: " << __FILE__ << ":" << __LINE__ << std::endl;
       ++error_count;
    }
    if(0 != boost_no_two_phase_name_lookup::test())

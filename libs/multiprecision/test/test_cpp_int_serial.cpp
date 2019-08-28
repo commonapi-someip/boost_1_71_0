@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////
 //  Copyright 2012 John Maddock. Distributed under the Boost
 //  Software License, Version 1.0. (See accompanying file
-//  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_
+//  LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt
 
 //
 // Compare arithmetic results using fixed_int to GMP results.
@@ -23,7 +23,9 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
 #include <boost/exception/all.hpp>
 
 template <class T>
@@ -64,7 +66,9 @@ template <class T>
 void test_neg(const T& x, const boost::mpl::true_&)
 {
    T val = -x;
+#ifndef BOOST_NO_EXCEPTIONS
    try{
+#endif
       std::stringstream ss;
       boost::archive::text_oarchive oa(ss);
       oa << static_cast<const T&>(val);
@@ -79,6 +83,7 @@ void test_neg(const T& x, const boost::mpl::true_&)
       boost::archive::binary_iarchive ib(ss);
       ib >> val2;
       BOOST_CHECK_EQUAL(val, val2);
+#ifndef BOOST_NO_EXCEPTIONS
    }
    catch(const boost::exception& e)
    {
@@ -90,6 +95,7 @@ void test_neg(const T& x, const boost::mpl::true_&)
       std::cout << "Caught std::exception with:\n";
       std::cout << e.what() << std::endl;
    }
+#endif
 }
 template <class T>
 void test_neg(const T& , const boost::mpl::false_&){}
@@ -106,22 +112,39 @@ void test()
    while(true)
    {
       T val = generate_random<T>(d(gen));
+#ifndef BOOST_NO_EXCEPTIONS
       try
       {
-         std::stringstream ss;
-         boost::archive::text_oarchive oa(ss);
-         oa << static_cast<const T&>(val);
-         boost::archive::text_iarchive ia(ss);
+#endif
          T val2;
-         ia >> val2;
-         BOOST_CHECK_EQUAL(val, val2);
+         {
+            std::stringstream ss;
+            boost::archive::text_oarchive oa(ss);
+            oa << static_cast<const T&>(val);
+            boost::archive::text_iarchive ia(ss);
+            ia >> val2;
+            BOOST_CHECK_EQUAL(val, val2);
+         }
+         {
+            std::stringstream ss;
+            boost::archive::binary_oarchive ob(ss);
+            ob << static_cast<const T&>(val);
+            boost::archive::binary_iarchive ib(ss);
+            ib >> val2;
+            BOOST_CHECK_EQUAL(val, val2);
+         }
+         {
+            std::stringstream ss;
+            {
+               boost::archive::xml_oarchive oc(ss);
+               oc << boost::serialization::make_nvp("value", static_cast<const T&>(val));
+            }
+            boost::archive::xml_iarchive ic(ss);
+            ic >> boost::serialization::make_nvp("value", val2);
+            BOOST_CHECK_EQUAL(val, val2);
+         }
 
-         ss.clear();
-         boost::archive::binary_oarchive ob(ss);
-         ob << static_cast<const T&>(val);
-         boost::archive::binary_iarchive ib(ss);
-         ib >> val2;
-         BOOST_CHECK_EQUAL(val, val2);
+#ifndef BOOST_NO_EXCEPTIONS
       }
       catch(const boost::exception& e)
       {
@@ -133,14 +156,18 @@ void test()
          std::cout << "Caught std::exception with:\n";
          std::cout << e.what() << std::endl;
       }
-      
+#endif      
       test_neg(val, boost::mpl::bool_<std::numeric_limits<T>::is_signed>());
       //
       // Check to see if test is taking too long.
       // Tests run on the compiler farm time out after 300 seconds,
       // so don't get too close to that:
       //
+#ifndef CI_SUPPRESS_KNOWN_ISSUES
       if(tim.elapsed() > 150)
+#else
+      if(tim.elapsed() > 25)
+#endif
       {
          std::cout << "Timeout reached, aborting tests now....\n";
          break;

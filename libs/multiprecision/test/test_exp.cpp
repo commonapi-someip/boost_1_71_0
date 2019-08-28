@@ -2,7 +2,7 @@
 //  Copyright Christopher Kormanyos 2002 - 2011.
 //  Copyright 2011 John Maddock. Distributed under the Boost
 //  Software License, Version 1.0. (See accompanying file
-//  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_
+//  LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt
 //
 // This work is based on an earlier work:
 // "Algorithm 910: A Portable C++ Multiple-Precision System for Special-Function Calculations",
@@ -10,6 +10,7 @@
 
 #ifdef _MSC_VER
 #  define _SCL_SECURE_NO_WARNINGS
+#pragma warning (disable:4127)
 #endif
 
 #include <boost/detail/lightweight_test.hpp>
@@ -141,12 +142,12 @@ void test()
 #if defined(BOOST_INTEL) && defined(TEST_FLOAT128)
    BOOST_TEST(max_err < 40000);
 #elif defined(TEST_CPP_BIN_FLOAT)
-   BOOST_TEST(max_err < 6000);
+   BOOST_TEST(max_err < 6200);
 #else
    BOOST_TEST(max_err < 5000);
 #endif
 
-   static const boost::array<boost::array<T, 2>, 10> exact_data =
+   static const boost::array<boost::array<T, 2>, 12> exact_data =
    {{
       {{ std::ldexp(1.0, -50), static_cast<T>("1.00000000000000088817841970012562676935794497867573073630970950828771105957980924149923657574337470594698012676100224953") }},
       {{ std::ldexp(1.0, -20), static_cast<T>("1.00000095367477115374544678824955687428365188553281789775169686343569285229334215539516690752571791280462887427635269562") }},
@@ -158,6 +159,8 @@ void test()
       {{ 10.5, static_cast<T>("36315.5026742466377389120269013166179689315579671275857607480190550842856628099187749764427758174866310742771977376827512") }},
       {{ 25, static_cast<T>("7.20048993373858725241613514661261579152235338133952787362213864472320593107782569745000325654258093194727871848859163684e10") }},
       {{ 31.25, static_cast<T>("3.72994612957188849046766396046821396700589012875701157893019118883826370993674081486706667149871508642909416337810227575e13") }},
+      {{ static_cast<T>("65.8489821531948043946370515385267739671725127642242491414646009018723940871209979825570160646597753164901406969542"), static_cast<T>("39614081257132168796771975168.0") }},
+      {{ static_cast<T>("65.15583497263485908521981941706859739909701262986399388734392089237900046515130326695115273766335662894813921593"), static_cast<T>("19807040628566084398385987584.0") }},
    }};
 
    max_err = 0;
@@ -179,9 +182,31 @@ void test()
       }
    }
    std::cout << "Max error was: " << max_err << std::endl;
-   BOOST_TEST(max_err < 20);
+   BOOST_TEST(max_err < 60);
 
    BOOST_TEST(exp(T(0)) == 1);
+
+   if (!boost::multiprecision::is_interval_number<T>::value)
+   {
+      T bug_case = -1.05 * log((std::numeric_limits<T>::max)());
+      for (unsigned i = 0; bug_case > -20 / std::numeric_limits<T>::epsilon(); ++i, bug_case *= 1.05)
+      {
+         if (std::numeric_limits<T>::has_infinity)
+         {
+            BOOST_CHECK_EQUAL(exp(bug_case), 0);
+         }
+         else
+         {
+            BOOST_CHECK_LE(exp(bug_case), std::numeric_limits<T>::min());
+         }
+      }
+      bug_case = log((std::numeric_limits<T>::max)()) / -1.0005;
+      for (unsigned i = 0; i < 20; ++i, bug_case /= 1.05)
+      {
+         BOOST_CHECK_GE(exp(bug_case), (std::numeric_limits<T>::min)());
+      }
+   }
+
 }
 
 
@@ -213,8 +238,8 @@ int main()
    test<boost::multiprecision::number<boost::multiprecision::cpp_dec_float<62> > >();
    test<boost::multiprecision::number<boost::multiprecision::cpp_dec_float<61, long long> > >();
    test<boost::multiprecision::number<boost::multiprecision::cpp_dec_float<60, long long> > >();
-   test<boost::multiprecision::number<boost::multiprecision::cpp_dec_float<59, long long, std::allocator<void> > > >();
-   test<boost::multiprecision::number<boost::multiprecision::cpp_dec_float<58, long long, std::allocator<void> > > >();
+   test<boost::multiprecision::number<boost::multiprecision::cpp_dec_float<59, long long, std::allocator<char> > > >();
+   test<boost::multiprecision::number<boost::multiprecision::cpp_dec_float<58, long long, std::allocator<char> > > >();
    // Check low multiprecision digit counts.
    test<boost::multiprecision::number<boost::multiprecision::cpp_dec_float<9> > >();
    test<boost::multiprecision::number<boost::multiprecision::cpp_dec_float<18> > >();
@@ -225,6 +250,7 @@ int main()
 #endif
 #ifdef TEST_CPP_BIN_FLOAT
    test<boost::multiprecision::cpp_bin_float_50>();
+   test<boost::multiprecision::number<boost::multiprecision::cpp_bin_float<35, boost::multiprecision::digit_base_10, std::allocator<char>, boost::long_long_type> > >();
 #endif
    return boost::report_errors();
 }

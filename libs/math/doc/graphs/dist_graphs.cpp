@@ -10,7 +10,7 @@
     \author John Maddock and Paul A. Bristow
   */
 //  Copyright John Maddock 2008.
-//  Copyright Paul A. Bristow 2008, 2009, 2012
+//  Copyright Paul A. Bristow 2008, 2009, 2012, 2016
 //  Use, modification and distribution are subject to the
 //  Boost Software License, Version 1.0. (See accompanying file
 //  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -35,8 +35,9 @@
 
 template <class Dist>
 struct is_discrete_distribution
-   : public boost::mpl::false_{};
+   : public boost::mpl::false_{}; // Default is continuous distribution.
 
+// Some discrete distributions.
 template<class T, class P>
 struct is_discrete_distribution<boost::math::bernoulli_distribution<T,P> >
    : public boost::mpl::true_{};
@@ -68,7 +69,7 @@ struct value_finder
 private:
    Dist m_dist;
    typename Dist::value_type m_value;
-};
+}; // value_finder
 
 template <class Dist>
 class distribution_plotter
@@ -79,33 +80,34 @@ public:
 
    void add(const Dist& d, const std::string& name)
    {
-      //
-      // Add to our list for later:
-      //
+      // Add name of distribution to our list for later:
       m_distributions.push_back(std::make_pair(name, d));
       //
-      // Get the extent:
-      //
+      // Get the extent of the distribution from the support:
       double a, b;
       std::tr1::tie(a, b) = support(d);
       //
-      // PDF maximimum is at the mode:
-      //
+      // PDF maximimum is at the mode (probably):
       double mod;
       try
       {
          mod = mode(d);
       }
       catch(const std::domain_error& )
-      {
+      { // but if not use the lower limit of support.
          mod = a;
       }
       if((mod <= a) && !is_discrete_distribution<Dist>::value)
-      {
-         if((a != 0) && (fabs(a) > 1e-2))
-            mod = a * (1 + 1e-2);
+      { // Continuous distribution at or below lower limit of support.
+        double margin = 1e-2; // Margin of 1% (say) to get lowest off the 'end stop'.
+         if((a != 0) && (fabs(a) > margin))
+         {  
+            mod = a * (1 + ((a > 0) ? margin : -margin)); 
+         }
          else
-            mod = 1e-2;
+         { // Case of mod near zero?
+            mod = margin;
+         }
       }
       double peek_y = pdf(d, mod);
       double min_y = peek_y / 20;
@@ -176,7 +178,7 @@ public:
          if(b > m_max_x)
             m_max_x = b;
       }
-   }
+   } // add
 
    void plot(const std::string& title, const std::string& file)
    {
@@ -197,9 +199,12 @@ public:
          m_max_y = 1;
       }
 
+      std::cout << "Plotting " << title << " to " << file << std::endl;
+
       svg_2d_plot plot;
       plot.image_x_size(750);
       plot.image_y_size(400);
+      plot.copyright_holder("John Maddock").copyright_date("2008").boost_license_on(true);
       plot.coord_precision(4); // Avoids any visible steps.
       plot.title_font_size(20);
       plot.legend_title_font_size(15);
@@ -247,25 +252,24 @@ public:
 
       if(!is_discrete_distribution<Dist>::value)
       {
-         //
          // Continuous distribution:
-         //
          for(std::list<std::pair<std::string, Dist> >::const_iterator i = m_distributions.begin();
             i != m_distributions.end(); ++i)
          {
             double x = m_min_x;
-            double interval = (m_max_x - m_min_x) / 200;
+            double continuous_interval = (m_max_x - m_min_x) / 200;
             std::map<double, double> data;
             while(x <= m_max_x)
             {
                data[x] = m_pdf ? pdf(i->second, x) : cdf(i->second, x);
-               x += interval;
+               x += continuous_interval;
             }
             plot.plot(data, i->first)
                .line_on(true)
                .line_color(colors[color_index])
                .line_width(1.)
                .shape(none);
+
                //.bezier_on(true) // Bezier can't cope with badly behaved like uniform & triangular.
             ++color_index;
             color_index = color_index % (sizeof(colors)/sizeof(colors[0]));
@@ -273,16 +277,14 @@ public:
       }
       else
       {
-         //
          // Discrete distribution:
-         //
          double x_width = 0.75 / m_distributions.size();
          double x_off = -0.5 * 0.75;
          for(std::list<std::pair<std::string, Dist> >::const_iterator i = m_distributions.begin();
             i != m_distributions.end(); ++i)
          {
             double x = ceil(m_min_x);
-            double interval = 1;
+            double discrete_interval = 1;
             std::map<double, double> data;
             while(x <= m_max_x)
             {
@@ -298,7 +300,7 @@ public:
                data[x + x_off + 0.00001] = p;
                data[x + x_off + x_width] = p;
                data[x + x_off + x_width + 0.00001] = 0;
-               x += interval;
+               x += discrete_interval;
             }
             x_off += x_width;
             svg_2d_plot_series& s = plot.plot(data, i->first);
@@ -310,9 +312,9 @@ public:
             ++color_index;
             color_index = color_index % (sizeof(colors)/sizeof(colors[0]));
          }
-      }
+      } // descrete
       plot.write(file);
-   }
+   } // void plot(const std::string& title, const std::string& file)
 
 private:
    bool m_pdf;
@@ -322,6 +324,9 @@ private:
 
 int main()
 {
+  try
+  {
+   std::cout << "Distribution Graphs" << std::endl;
    distribution_plotter<boost::math::gamma_distribution<> >
       gamma_plotter;
    gamma_plotter.add(boost::math::gamma_distribution<>(0.75), "shape = 0.75");
@@ -652,5 +657,65 @@ int main()
    hypergeometric_plotter2.add(boost::math::hypergeometric_distribution<>(400, 50, 500), "N=500, r=50, n=400");
    hypergeometric_plotter2.add(boost::math::hypergeometric_distribution<>(450, 50, 500), "N=500, r=50, n=450");
    hypergeometric_plotter2.plot("Hypergeometric Distribution PDF", "hypergeometric_pdf_2.svg");
+
+  }
+  catch (std::exception ex)
+  {
+    std::cout << ex.what() << std::endl;
+  }
+
+
+
+   /* these graphs for hyperexponential distribution not used.
+
+   distribution_plotter<boost::math::hyperexponential_distribution<> >
+      hyperexponential_plotter;
+   {
+       const double probs1_1[] = {1.0};
+       const double rates1_1[] = {1.0};
+       hyperexponential_plotter.add(boost::math::hyperexponential_distribution<>(probs1_1,rates1_1), "&#x3B1=(1.0), &#x3BB=(1.0)");
+       const double probs2_1[] = {0.1,0.9};
+       const double rates2_1[] = {0.5,1.5};
+       hyperexponential_plotter.add(boost::math::hyperexponential_distribution<>(probs2_1,rates2_1), "&#x3B1=(0.1,0.9), &#x3BB=(0.5,1.5)");
+       const double probs2_2[] = {0.9,0.1};
+       const double rates2_2[] = {0.5,1.5};
+       hyperexponential_plotter.add(boost::math::hyperexponential_distribution<>(probs2_2,rates2_2), "&#x3B1=(0.9,0.1), &#x3BB=(0.5,1.5)");
+       const double probs3_1[] = {0.2,0.3,0.5};
+       const double rates3_1[] = {0.5,1.0,1.5};
+       hyperexponential_plotter.add(boost::math::hyperexponential_distribution<>(probs3_1,rates3_1), "&#x3B1=(0.2,0.3,0.5), &#x3BB=(0.5,1.0,1.5)");
+       const double probs3_2[] = {0.5,0.3,0.2};
+       const double rates3_2[] = {0.5,1.0,1.5};
+       hyperexponential_plotter.add(boost::math::hyperexponential_distribution<>(probs3_1,rates3_1), "&#x3B1=(0.5,0.3,0.2), &#x3BB=(0.5,1.0,1.5)");
+   }
+   hyperexponential_plotter.plot("Hyperexponential Distribution PDF", "hyperexponential_pdf.svg");
+
+   distribution_plotter<boost::math::hyperexponential_distribution<> >
+      hyperexponential_plotter2;
+   {
+       const double rates[] = {0.5,1.5};
+       const double probs1[] = {0.1,0.9};
+       hyperexponential_plotter2.add(boost::math::hyperexponential_distribution<>(probs1,rates), "&#x3B1=(0.1,0.9), &#x3BB=(0.5,1.5)");
+       const double probs2[] = {0.6,0.4};
+       hyperexponential_plotter2.add(boost::math::hyperexponential_distribution<>(probs2,rates), "&#x3B1=(0.6,0.4), &#x3BB=(0.5,1.5)");
+       const double probs3[] = {0.9,0.1};
+       hyperexponential_plotter2.add(boost::math::hyperexponential_distribution<>(probs3,rates), "&#x3B1=(0.9,0.1), &#x3BB=(0.5,1.5)");
+   }
+   hyperexponential_plotter2.plot("Hyperexponential Distribution PDF (Different Probabilities, Same Rates)", "hyperexponential_pdf_samerate.svg");
+
+   distribution_plotter<boost::math::hyperexponential_distribution<> >
+      hyperexponential_plotter3;
+   {
+       const double probs1[] = {1.0};
+       const double rates1[] = {2.0};
+       hyperexponential_plotter3.add(boost::math::hyperexponential_distribution<>(probs1,rates1), "&#x3B1=(1.0), &#x3BB=(2.0)");
+       const double probs2[] = {0.5,0.5};
+       const double rates2[] = {0.3,1.5};
+       hyperexponential_plotter3.add(boost::math::hyperexponential_distribution<>(probs2,rates2), "&#x3B1=(0.5,0.5), &#x3BB=(0.3,1.5)");
+       const double probs3[] = {1.0/3.0,1.0/3.0,1.0/3.0};
+       const double rates3[] = {0.2,1.5,3.0};
+       hyperexponential_plotter3.add(boost::math::hyperexponential_distribution<>(probs2,rates2), "&#x3B1=(1.0/3.0,1.0/3.0,1.0/3.0), &#x3BB=(0.2,1.5,3.0)");
+   }
+   hyperexponential_plotter3.plot("Hyperexponential Distribution PDF (Different Number of Phases, Same Mean)", "hyperexponential_pdf_samemean.svg");
+   */
 
 } // int main()

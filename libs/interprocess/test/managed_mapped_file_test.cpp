@@ -9,6 +9,10 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include <boost/interprocess/detail/config_begin.hpp>
+#include <boost/interprocess/detail/workaround.hpp>
+
+#if defined(BOOST_INTERPROCESS_MAPPED_FILES)
+
 #include <boost/interprocess/allocators/allocator.hpp>
 #include <boost/interprocess/containers/vector.hpp>
 #include <boost/interprocess/managed_mapped_file.hpp>
@@ -222,5 +226,14 @@ int main ()
    file_mapping::remove(FileName);
    return 0;
 }
+
+#else //#if defined(BOOST_INTERPROCESS_MAPPED_FILES)
+
+int main()
+{
+   return 0;
+}
+
+#endif//#if defined(BOOST_INTERPROCESS_MAPPED_FILES)
 
 #include <boost/interprocess/detail/config_end.hpp>

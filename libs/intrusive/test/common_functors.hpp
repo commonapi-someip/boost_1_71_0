@@ -13,9 +13,10 @@
 #ifndef BOOST_INTRUSIVE_TEST_COMMON_FUNCTORS_HPP
 #define BOOST_INTRUSIVE_TEST_COMMON_FUNCTORS_HPP
 
-#include<boost/intrusive/detail/utilities.hpp>
+#include<boost/intrusive/detail/iterator.hpp>
 #include<boost/intrusive/detail/mpl.hpp>
 #include<boost/static_assert.hpp>
+#include<boost/move/detail/to_raw_pointer.hpp>
 
 namespace boost      {
 namespace intrusive  {
@@ -28,9 +29,9 @@ class delete_disposer
    template <class Pointer>
       void operator()(Pointer p)
    {
-      typedef typename std::iterator_traits<Pointer>::value_type value_type;
+      typedef typename boost::intrusive::iterator_traits<Pointer>::value_type value_type;
       BOOST_STATIC_ASSERT(( detail::is_same<T, value_type>::value ));
-      delete boost::intrusive::detail::to_raw_pointer(p);
+      delete boost::movelib::to_raw_pointer(p);
    }
 };
 
@@ -43,11 +44,41 @@ class new_cloner
 };
 
 template<class T>
+class new_nonconst_cloner
+{
+   public:
+      T *operator()(T &t)
+   {  return new T(t);  }
+};
+
+template<class T>
 class new_default_factory
 {
    public:
       T *operator()()
    {  return new T();  }
+};
+
+class empty_disposer
+{
+   public:
+   template<class T>
+   void operator()(const T &)
+   {}
+};
+
+struct any_less
+{
+   template<class T, class U>
+   bool operator()(const T &t, const U &u) const
+   {  return t < u;  }
+};
+
+struct any_greater
+{
+   template<class T, class U>
+   bool operator()(const T &t, const U &u) const
+   {  return t > u;  }
 };
 
 }  //namespace test       {

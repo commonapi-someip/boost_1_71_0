@@ -45,28 +45,33 @@ int test()
   using std::is_trivially_copyable;
   using std::is_standard_layout;
   using std::is_pod;
+#if !((__cplusplus > 201700) || (defined(_MSVC_LANG) && (_MSVC_LANG > 201700)))
+  // deprecated in C++ 17:
   using std::is_literal_type;
+  using std::result_of;
+#endif
   using std::is_empty;
   using std::is_polymorphic;
   using std::is_abstract;
   using std::is_constructible;
   using std::is_nothrow_constructible;
-  using std::has_default_constructor;
-  using std::has_copy_constructor;
-  using std::has_copy_assign;
-  using std::has_move_constructor;
-  using std::has_move_assign;
-  using std::has_trivial_default_constructor;
-  using std::has_trivial_copy_constructor;
-  using std::has_trivial_move_constructor;
-  using std::has_trivial_copy_assign;
-  using std::has_trivial_move_assign;
-  using std::has_trivial_destructor;
-  using std::has_nothrow_default_constructor;
-  using std::has_nothrow_copy_constructor;
-  using std::has_nothrow_move_constructor;
-  using std::has_nothrow_copy_assign;
-  using std::has_nothrow_move_assign;
+  using std::is_default_constructible;
+  using std::is_copy_constructible;
+  using std::is_copy_assignable;
+  using std::is_move_constructible;
+  using std::is_move_assignable;
+  using std::is_destructible;
+  using std::is_trivially_default_constructible;
+  using std::is_trivially_copy_constructible;
+  using std::is_trivially_move_constructible;
+  using std::is_trivially_copy_assignable;
+  using std::is_trivially_move_assignable;
+  using std::is_trivially_destructible;
+  using std::is_nothrow_default_constructible;
+  using std::is_nothrow_copy_constructible;
+  using std::is_nothrow_move_constructible;
+  using std::is_nothrow_copy_assignable;
+  using std::is_nothrow_move_assignable;
   using std::has_virtual_destructor;
   using std::is_signed;
   using std::is_unsigned;
@@ -98,7 +103,6 @@ int test()
   using std::conditional;
   using std::common_type;
   using std::underlying_type;
-  using std::result_of;
   return 0;
 }
 

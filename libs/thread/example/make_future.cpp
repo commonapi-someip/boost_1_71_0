@@ -96,6 +96,11 @@ int main()
 #endif
   {
     std::cout << __FILE__ << " "<< __LINE__ << std::endl;
+    boost::future<int> f = compute(-1);
+    f.wait();
+  }
+  {
+    std::cout << __FILE__ << " "<< __LINE__ << std::endl;
     boost::future<int> f = compute(0);
     std::cout << f.get() << std::endl;
   }
@@ -104,11 +109,31 @@ int main()
     boost::future<int&> f = compute_ref(0);
     std::cout << f.get() << std::endl;
   }
-//  {
-//    std::cout << __FILE__ << " "<< __LINE__ << std::endl;
-//    boost::future<int> f = compute(2);
-//    std::cout << f.get() << std::endl;
-//  }
+#if __cplusplus > 201103L
+  {
+    std::cout << __FILE__ << " "<< __LINE__ << std::endl;
+    int i = 0;
+    boost::future<int&> f = boost::make_ready_future(std::ref(i));
+    std::cout << f.get() << std::endl;
+  }
+#endif
+  {
+    std::cout << __FILE__ << " "<< __LINE__ << std::endl;
+    int i = 0;
+    boost::future<int&> f = boost::make_ready_future(boost::ref(i));
+    std::cout << f.get() << std::endl;
+  }
+  {
+    std::cout << __FILE__ << " "<< __LINE__ << std::endl;
+    const int i = 0;
+    boost::future<int const&> f = boost::make_ready_future(boost::cref(i));
+    std::cout << f.get() << std::endl;
+  }
+  {
+    std::cout << __FILE__ << " "<< __LINE__ << std::endl;
+    boost::future<int> f = compute(2);
+    std::cout << f.get() << std::endl;
+  }
   {
     std::cout << __FILE__ << " "<< __LINE__ << std::endl;
     boost::shared_future<int> f = shared_compute(0);

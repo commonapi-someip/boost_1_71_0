@@ -2,7 +2,7 @@
 //
 //  See http://www.boost.org for most recent version, including documentation.
 //
-//  Copyright Antony Polukhin, 2014.
+//  Copyright Antony Polukhin, 2014-2019.
 //
 //  Distributed under the Boost
 //  Software License, Version 1.0. (See accompanying file
@@ -10,7 +10,7 @@
 
 #include <boost/config.hpp>
 
-#include <boost/lexical_cast.hpp>
+#include <boost/lexical_cast/try_lexical_convert.hpp>
 #include <boost/test/unit_test.hpp>
 
 using namespace boost::conversion;

@@ -12,19 +12,19 @@
 
 #include <boost/concept_check.hpp>
 
-namespace boost { namespace container { namespace container_detail { namespace concept {
+namespace boost { namespace container { namespace dtl { namespace concept {
 
 /**
  * VArrayStrategyConcept
  *
- *  \brief Checks strategy for varray<Value,Capacity,Strategy>, which has similarities to std::Allocator
+ *  \brief Checks strategy for varray<Value,Capacity,Strategy>, which has similarities to std::allocator
  *  \ingroup varray
  */
 template<typename Strategy>
 struct VArrayStrategy {
 #ifndef DOXYGEN_NO_CONCEPT_MEMBERS
 
-    // typedefs are the same as in std::Allocator
+    // typedefs are the same as in std::allocator
     typedef typename Strategy::value_type      value_type;
     typedef typename Strategy::size_type       size_type;
     typedef typename Strategy::difference_type difference_type;
@@ -55,6 +55,6 @@ public :
 #endif
 };
 
-}}}} // namespace boost::container::container_detail::concept
+}}}} // namespace boost::container::dtl::concept
 
 #endif //BOOST_CONTAINER_VARRAY_CONCEPT_HPP

@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////
 //  Copyright 2011 John Maddock. Distributed under the Boost
 //  Software License, Version 1.0. (See accompanying file
-//  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_
+//  LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt
 
 #include "setup.hpp"
 #include "table_type.hpp"
@@ -34,9 +34,30 @@ void expected_results()
       ".*",                          // compiler
       ".*",                          // stdlib
       ".*",                          // platform
+      ".*mpfr_float_backend<0>.*",   // test type(s)
+      ".*Mathworld.*",               // test data group
+      ".*", 10000, 3000);            // test function
+   add_expected_result(
+      ".*",                          // compiler
+      ".*",                          // stdlib
+      ".*",                          // platform
+      ".*gmp_float<0>.*",            // test type(s)
+      ".*",               // test data group
+      ".*", 10000, 1200);            // test function
+   add_expected_result(
+      ".*",                          // compiler
+      ".*",                          // stdlib
+      ".*",                          // platform
       ".*",                          // test type(s)
       ".*Large.*",                   // test data group
       ".*", 75, 40);                 // test function
+   add_expected_result(
+      ".*",                          // compiler
+      ".*",                          // stdlib
+      ".*",                          // platform
+      ".*cpp_bin_float_quad.*",      // test type(s)
+      ".*Mathworld.*",               // test data group
+      ".*", 500, 100);               // test function
 #ifdef BOOST_INTEL
    add_expected_result(
       ".*",                          // compiler
@@ -46,6 +67,13 @@ void expected_results()
       ".*",                          // test data group
       ".*", 200, 30);              // test function
 #endif
+   add_expected_result(
+      ".*",                          // compiler
+      ".*",                          // stdlib
+      ".*",                          // platform
+      ".*",                          // test type(s)
+      ".*Mathworld.*",               // test data group
+      ".*", 600, 300);            // test function
    add_expected_result(
       ".*",                          // compiler
       ".*",                          // stdlib

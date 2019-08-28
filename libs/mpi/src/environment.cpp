@@ -8,6 +8,7 @@
 #include <boost/mpi/environment.hpp>
 #include <boost/mpi/exception.hpp>
 #include <boost/mpi/detail/mpi_datatype_cache.hpp>
+#include <boost/core/uncaught_exceptions.hpp>
 #include <cassert>
 #include <string>
 #include <exception>
@@ -71,7 +72,11 @@ environment::environment(bool abort_on_exception)
     i_initialized = true;
   }
 
+#if (2 <= MPI_VERSION)
+  MPI_Comm_set_errhandler(MPI_COMM_WORLD, MPI_ERRORS_RETURN);
+#else
   MPI_Errhandler_set(MPI_COMM_WORLD, MPI_ERRORS_RETURN);
+#endif
 }
 
 environment::environment(threading::level mt_level, bool abort_on_exception)
@@ -86,7 +91,11 @@ environment::environment(threading::level mt_level, bool abort_on_exception)
     i_initialized = true;
   }
 
+#if (2 <= MPI_VERSION)
+  MPI_Comm_set_errhandler(MPI_COMM_WORLD, MPI_ERRORS_RETURN);
+#else
   MPI_Errhandler_set(MPI_COMM_WORLD, MPI_ERRORS_RETURN);
+#endif
 }
 #endif
 
@@ -99,7 +108,11 @@ environment::environment(int& argc, char** &argv, bool abort_on_exception)
     i_initialized = true;
   }
 
+#if (2 <= MPI_VERSION)
+  MPI_Comm_set_errhandler(MPI_COMM_WORLD, MPI_ERRORS_RETURN);
+#else
   MPI_Errhandler_set(MPI_COMM_WORLD, MPI_ERRORS_RETURN);
+#endif
 }
 
 environment::environment(int& argc, char** &argv, threading::level mt_level,
@@ -115,13 +128,17 @@ environment::environment(int& argc, char** &argv, threading::level mt_level,
     i_initialized = true;
   }
 
+#if (2 <= MPI_VERSION)
+  MPI_Comm_set_errhandler(MPI_COMM_WORLD, MPI_ERRORS_RETURN);
+#else
   MPI_Errhandler_set(MPI_COMM_WORLD, MPI_ERRORS_RETURN);
+#endif
 }
 
 environment::~environment()
 {
   if (i_initialized) {
-    if (std::uncaught_exception() && abort_on_exception) {
+    if (boost::core::uncaught_exceptions() > 0 && abort_on_exception) {
       abort(-1);
     } else if (!finalized()) {
       detail::mpi_datatype_cache().clear();
@@ -154,8 +171,13 @@ int environment::max_tag()
   int* max_tag_value;
   int found = 0;
 
+#if (2 <= MPI_VERSION)
+  BOOST_MPI_CHECK_RESULT(MPI_Comm_get_attr,
+                         (MPI_COMM_WORLD, MPI_TAG_UB, &max_tag_value, &found));
+#else
   BOOST_MPI_CHECK_RESULT(MPI_Attr_get,
                          (MPI_COMM_WORLD, MPI_TAG_UB, &max_tag_value, &found));
+#endif
   assert(found != 0);
   return *max_tag_value - num_reserved_tags;
 }
@@ -170,8 +192,13 @@ optional<int> environment::host_rank()
   int* host;
   int found = 0;
 
+#if (2 <= MPI_VERSION)
+  BOOST_MPI_CHECK_RESULT(MPI_Comm_get_attr,
+                         (MPI_COMM_WORLD, MPI_HOST, &host, &found));
+#else
   BOOST_MPI_CHECK_RESULT(MPI_Attr_get,
                          (MPI_COMM_WORLD, MPI_HOST, &host, &found));
+#endif
   if (!found || *host == MPI_PROC_NULL)
     return optional<int>();
   else
@@ -183,8 +210,13 @@ optional<int> environment::io_rank()
   int* io;
   int found = 0;
 
+#if (2 <= MPI_VERSION)
+  BOOST_MPI_CHECK_RESULT(MPI_Comm_get_attr,
+                         (MPI_COMM_WORLD, MPI_IO, &io, &found));
+#else
   BOOST_MPI_CHECK_RESULT(MPI_Attr_get,
                          (MPI_COMM_WORLD, MPI_IO, &io, &found));
+#endif
   if (!found || *io == MPI_PROC_NULL)
     return optional<int>();
   else
@@ -214,6 +246,13 @@ bool environment::is_main_thread()
 
   BOOST_MPI_CHECK_RESULT(MPI_Is_thread_main, (&isit));
   return static_cast<bool>(isit);
+}
+
+std::pair<int, int> environment::version()
+{
+  int major, minor;
+  BOOST_MPI_CHECK_RESULT(MPI_Get_version, (&major, &minor));
+  return std::make_pair(major, minor);
 }
 
 } } // end namespace boost::mpi

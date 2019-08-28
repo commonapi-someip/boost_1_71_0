@@ -5,7 +5,7 @@
           http://www.boost.org/LICENSE_1_0.txt)
 */
 
-/*******************************************************
+/******************************************************
  *                                                     *
  *  -------------------------------------------------  *
  *  |  0  |  1  |  2  |  3  |  4  |  5  |  6  |  7  |  *
@@ -57,63 +57,82 @@
  *  | R23 | R24 | R25 | R26 | R27 | R28 | R29 | R30 |  *
  *  -------------------------------------------------  *
  *  -------------------------------------------------  *
- *  |  56 |  57 |  58 |  59 |                       |  *
+ *  |  56 |  57 |  58 |  59 |  60 |  61 |  62 |  63 |  *
  *  -------------------------------------------------  *
- *  | 224 | 228 | 232 | 236 |                       |  *
+ *  | 224 | 228 | 232 | 236 | 240 | 244 | 248 | 252 |  *
  *  -------------------------------------------------  *
- *  | R31 |  CR |  LR |  PC |                       |  *
+ *  | R31 |hiddn|  CR |  LR |  PC |bchai|linkr| FCTX|  *
+ *  -------------------------------------------------  *
+ *  -------------------------------------------------  *
+ *  |  64 |                                         |  *
+ *  -------------------------------------------------  *
+ *  | 256 |                                         |  *
+ *  -------------------------------------------------  *
+ *  | DATA|                                         |  * 
  *  -------------------------------------------------  *
  *                                                     *
  *******************************************************/
-
-.text
-.globl _make_fcontext
-.align 2
-.def _make_fcontext; .scl 2; .type 32; .endef
-_make_fcontext:
+	.globl	make_fcontext[DS]
+	.globl .make_fcontext[PR]
+	.align 2 
+	.csect  make_fcontext[DS]
+make_fcontext:
+	.long .make_fcontext[PR]
+	.csect .make_fcontext[PR], 3
+#.make_fcontext:
     # save return address into R6
-    mflr  %r6
+    mflr  6
 
     # first arg of make_fcontext() == top address of context-function
     # shift address in R3 to lower 16 byte boundary
-    clrrwi  %r3, %r3, 4
+    clrrwi  3, 3, 4
 
     # reserve space for context-data on context-stack
     # including 64 byte of linkage + parameter area (R1 % 16 == 0)
-    subi  %r3, %r3, 304
+    subi  3, 3, 336
 
     # third arg of make_fcontext() == address of context-function
-    stw  %r5, 236(%r3)
+    stw  5, 240(3)
+
+    # set back-chain to zero
+    li   0, 0
+    stw  0, 244(3)
+
+    # compute address of returned transfer_t
+    addi  0, 3, 252
+    mr    4, 0 
+    stw   4, 228(3) 
 
     # load LR
-    mflr  %r0
+    mflr  0
     # jump to label 1
-    bl  1f
-1:
+    bl  .Label
+.Label:
     # load LR into R4
-    mflr  %r4
-    # compute abs address of label finish
-    addi  %r4, %r4, finish - 1b
+    mflr  4
+    # compute abs address of label .L_finish
+    addi  4, 4, .L_finish - .Label 
     # restore LR
-    mtlr  %r0
+    mtlr  0
     # save address of finish as return-address for context-function
     # will be entered after context-function returns
-    stw  %r4, 232(%r3)
+    stw  4, 236(3)
 
     # restore return address from R6
-    mtlr  %r6
+    mtlr  6
 
     blr  # return pointer to context-data
 
-finish:
+.L_finish:
     # save return address into R0
-    mflr  %r0
+    mflr  0
     # save return address on stack, set up stack frame
-    stw  %r0, 4(%r1)
+    stw  0, 4(1)
     # allocate stack space, R1 % 16 == 0
-    stwu  %r1, -16(%r1)
+    stwu  1, -16(1)
 
     # exit code is zero
-    li  %r3, 0
+    li  3, 0
     # exit application
-    bl  _exit
+    bl  ._exit
+    nop

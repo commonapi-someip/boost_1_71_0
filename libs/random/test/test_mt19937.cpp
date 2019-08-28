@@ -22,6 +22,9 @@
 #define BOOST_RANDOM_VALIDATION_VALUE 4123659995U
 #define BOOST_RANDOM_SEED_SEQ_VALIDATION_VALUE 666528879U
 #define BOOST_RANDOM_ITERATOR_VALIDATION_VALUE 3408548740U
+#define BOOST_RANDOM_DISCARD_COUNT1 9307
+#define BOOST_RANDOM_DISCARD_COUNT2 20000000
+#define BOOST_RANDOM_DISCARD_MAX
 
 #define BOOST_RANDOM_GENERATE_VALUES { 0xD091BB5CU, 0x22AE9EF6U, 0xE7E1FAEEU, 0xD5C31F79U }
 
@@ -50,12 +53,12 @@ BOOST_AUTO_TEST_CASE(test_special_seed) {
     
     std::vector<boost::uint32_t>::iterator it = vec.begin();
     boost::mt19937 gen1(it, vec.end());
-    BOOST_CHECK_EQUAL(gen1(), 0);
-    BOOST_CHECK_EQUAL(gen1(), 0);
+    BOOST_CHECK_EQUAL(gen1(), 0u);
+    BOOST_CHECK_EQUAL(gen1(), 0u);
     
     boost::mt19937 gen2(seed);
-    BOOST_CHECK_EQUAL(gen2(), 0);
-    BOOST_CHECK_EQUAL(gen2(), 0);
+    BOOST_CHECK_EQUAL(gen2(), 0u);
+    BOOST_CHECK_EQUAL(gen2(), 0u);
 
     BOOST_CHECK_EQUAL(gen1, gen2);
     }
@@ -67,11 +70,11 @@ BOOST_AUTO_TEST_CASE(test_special_seed) {
     std::vector<boost::uint32_t>::iterator it = vec.begin();
     boost::mt19937 gen1(it, vec.end());
     BOOST_CHECK_EQUAL(gen1(), 1141379330u);
-    BOOST_CHECK_EQUAL(gen1(), 0);
+    BOOST_CHECK_EQUAL(gen1(), 0u);
     
     boost::mt19937 gen2(seed);
     BOOST_CHECK_EQUAL(gen2(), 1141379330u);
-    BOOST_CHECK_EQUAL(gen2(), 0);
+    BOOST_CHECK_EQUAL(gen2(), 0u);
 
     BOOST_CHECK_EQUAL(gen1, gen2);
     }

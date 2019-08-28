@@ -69,14 +69,14 @@ public:
     size_t do_count;
 
     template< class System , class StateIn , class DerivIn , class StateOut >
-    void do_step( System system , const StateIn &in , const DerivIn &dxdt , value_type t , StateOut &out , value_type dt )
+    void do_step_dxdt_impl( System system , const StateIn &in , const DerivIn &dxdt , value_type t , StateOut &out , value_type dt )
     {
         m_stepper.do_step( system , in , dxdt , t , out , dt );
         ++do_count;
     }
 
     template< class System , class StateInOut , class DerivIn >
-    void do_step( System system , StateInOut &x , const DerivIn &dxdt , value_type t , value_type dt )
+    void do_step_dxdt_impl( System system , StateInOut &x , const DerivIn &dxdt , value_type t , value_type dt )
     {
         m_stepper.do_step( system , x , dxdt , t , dt );
         ++do_count;
@@ -208,8 +208,13 @@ BOOST_AUTO_TEST_CASE( test_auto_initialization )
     adams.do_step( lorenz() , x , 0.0 , x , 0.1 );
     BOOST_CHECK_EQUAL( adams.initializing_stepper().do_count , size_t( 2 ) );
 
+    adams.reset();
+
     adams.do_step( lorenz() , x , 0.0 , x , 0.1 );
-    BOOST_CHECK_EQUAL( adams.initializing_stepper().do_count , size_t( 2 ) );
+    BOOST_CHECK_EQUAL( adams.initializing_stepper().do_count , size_t( 3 ) );
+
+    adams.do_step( lorenz() , x , 0.0 , x , 0.1 );
+    BOOST_CHECK_EQUAL( adams.initializing_stepper().do_count , size_t( 4 ) );
 }
 
 BOOST_AUTO_TEST_CASE( test_manual_initialization )

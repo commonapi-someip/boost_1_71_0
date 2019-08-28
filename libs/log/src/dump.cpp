@@ -1,5 +1,5 @@
 /*
- *          Copyright Andrey Semashev 2007 - 2014.
+ *          Copyright Andrey Semashev 2007 - 2015.
  * Distributed under the Boost Software License, Version 1.0.
  *    (See accompanying file LICENSE_1_0.txt or copy at
  *          http://www.boost.org/LICENSE_1_0.txt)
@@ -13,12 +13,12 @@
  *         at http://www.boost.org/doc/libs/release/libs/log/doc/html/index.html.
  */
 
+#include <boost/log/detail/config.hpp>
 #include <ostream>
 #include <boost/cstdint.hpp>
 #include <boost/log/utility/manipulators/dump.hpp>
-#if defined(_MSC_VER)
-#include "windows_version.hpp"
-#include <windows.h>
+#if defined(_MSC_VER) && (defined(BOOST_LOG_USE_SSSE3) || defined(BOOST_LOG_USE_AVX2))
+#include <boost/winapi/dll.hpp>
 #include <intrin.h> // __cpuid
 #endif
 #include <boost/log/detail/header.hpp>
@@ -52,8 +52,11 @@ extern dump_data_char32_t dump_data_char32_avx2;
 
 enum { stride = 256 };
 
-extern const char g_lowercase_dump_char_table[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
-extern const char g_uppercase_dump_char_table[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+extern const char g_hex_char_table[2][16] =
+{
+    { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' },
+    { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' }
+};
 
 template< typename CharT >
 void dump_data_generic(const void* data, std::size_t size, std::basic_ostream< CharT >& strm)
@@ -62,7 +65,7 @@ void dump_data_generic(const void* data, std::size_t size, std::basic_ostream< C
 
     char_type buf[stride * 3u];
 
-    const char* const char_table = (strm.flags() & std::ios_base::uppercase) ? g_uppercase_dump_char_table : g_lowercase_dump_char_table;
+    const char* const char_table = g_hex_char_table[(strm.flags() & std::ios_base::uppercase) != 0];
     const std::size_t stride_count = size / stride, tail_size = size % stride;
 
     const uint8_t* p = static_cast< const uint8_t* >(data);
@@ -154,21 +157,19 @@ struct function_pointer_initializer
                             : "c" (0)
                     );
                     mmstate = (eax & 6U) == 6U;
-#elif defined(_MSC_VER)
+#elif defined(BOOST_WINDOWS)
                     // MSVC does not have an intrinsic for xgetbv, we have to query OS
-                    HMODULE hKernel32 = GetModuleHandleA("kernel32.dll");
+                    boost::winapi::HMODULE_ hKernel32 = boost::winapi::GetModuleHandleW(L"kernel32.dll");
                     if (hKernel32)
                     {
-                        typedef uint64_t (__stdcall* get_enabled_extended_features_t)(uint64_t);
-                        get_enabled_extended_features_t get_enabled_extended_features = (get_enabled_extended_features_t)GetProcAddress(hKernel32, "GetEnabledExtendedFeatures");
+                        typedef uint64_t (BOOST_WINAPI_WINAPI_CC* get_enabled_extended_features_t)(uint64_t);
+                        get_enabled_extended_features_t get_enabled_extended_features = (get_enabled_extended_features_t)boost::winapi::get_proc_address(hKernel32, "GetEnabledExtendedFeatures");
                         if (get_enabled_extended_features)
                         {
                             // XSTATE_MASK_LEGACY_SSE | XSTATE_MASK_GSSE == 6
                             mmstate = get_enabled_extended_features(6u) == 6u;
                         }
                     }
-#else
-#error Boost.Log: Unexpected compiler
 #endif
 
                     if (mmstate)
@@ -191,18 +192,28 @@ private:
     static void cpuid(uint32_t& eax, uint32_t& ebx, uint32_t& ecx, uint32_t& edx)
     {
 #if defined(__GNUC__)
-#if defined(__i386__) && defined(__PIC__) && __PIC__ != 0
-        // We have to backup ebx in 32 bit PIC code because it is reserved by the ABI
-        uint32_t ebx_backup;
+#if (defined(__i386__) || defined(__VXWORKS__)) && (defined(__PIC__) || defined(__PIE__)) && !(defined(__clang__) || (defined(BOOST_GCC) && BOOST_GCC >= 50100))
+        // Unless the compiler can do it automatically, we have to backup ebx in 32-bit PIC/PIE code because it is reserved by the ABI.
+        // For VxWorks ebx is reserved on 64-bit as well.
+#if defined(__x86_64__)
+        uint64_t rbx = ebx;
         __asm__ __volatile__
         (
-            "movl %%ebx, %0\n\t"
-            "movl %1, %%ebx\n\t"
+            "xchgq %%rbx, %0\n\t"
             "cpuid\n\t"
-            "movl %%ebx, %1\n\t"
-            "movl %0, %%ebx\n\t"
-                : "=m" (ebx_backup), "+m" (ebx), "+a" (eax), "+c" (ecx), "+d" (edx)
+            "xchgq %%rbx, %0\n\t"
+                : "+DS" (rbx), "+a" (eax), "+c" (ecx), "+d" (edx)
         );
+        ebx = static_cast< uint32_t >(rbx);
+#else // defined(__x86_64__)
+        __asm__ __volatile__
+        (
+            "xchgl %%ebx, %0\n\t"
+            "cpuid\n\t"
+            "xchgl %%ebx, %0\n\t"
+                : "+DS" (ebx), "+a" (eax), "+c" (ecx), "+d" (edx)
+        );
+#endif // defined(__x86_64__)
 #else
         __asm__ __volatile__
         (

@@ -3,7 +3,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
 <title>Asymmetric coroutine</title>
 <link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
 <link rel="home" href="../../index.html" title="Chapter&#160;1.&#160;Coroutine">
 <link rel="up" href="../coroutine.html" title="Coroutine">
 <link rel="prev" href="../coroutine.html" title="Coroutine">
@@ -338,6 +338,16 @@
     <span class="comment">// possibly not re-throw pending exception</span>
 <span class="special">}</span>
 </pre>
+<div class="important"><table border="0" summary="Important">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="../../../../../../doc/src/images/important.png"></td>
+<th align="left">Important</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+          Do not jump from inside a catch block and then re-throw the exception in
+          another execution context.
+        </p></td></tr>
+</table></div>
 <h5>
 <a name="coroutine.coroutine.asymmetric.h7"></a>
         <span class="phrase"><a name="coroutine.coroutine.asymmetric.stack_unwinding"></a></span><a class="link" href="asymmetric.html#coroutine.coroutine.asymmetric.stack_unwinding">Stack

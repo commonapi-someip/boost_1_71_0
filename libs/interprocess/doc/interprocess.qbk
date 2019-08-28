@@ -6,9 +6,9 @@
  /]
 
 [library Boost.Interprocess
-    [quickbook 1.4]
+    [quickbook 1.5]
     [authors [Gaztanaga, Ion]]
-    [copyright 2005-2012 Ion Gaztanaga]
+    [copyright 2005-2015 Ion Gaztanaga]
     [id interprocess]
     [dirname interprocess]
     [purpose Interprocess communication utilities]
@@ -73,9 +73,10 @@ your system's documentation to know which library implements them.
 
 [*Boost.Interprocess] has been tested in the following compilers/platforms:
 
-*  Visual >= 7.1
-*  GCC >= 4.1
-*  Intel 11
+*  Visual C++ >= 7.1.
+*  GCC >= 4.1.
+
+[warning GCC < 4.3 and MSVC < 9.0 are deprecated and will be removed in the next version.]
 
 [endsect]
 
@@ -270,7 +271,7 @@ Named [*Boost.Interprocess] resources (shared memory, memory mapped files,
 named mutexes/conditions/semaphores) have kernel or filesystem persistency.
 This means that even if all processes that have opened those resources
 end, the resource will still be accessible to be opened again and the resource
-can only be destructed via an explicit to their static member `remove` function.
+can only be destructed via an explicit call to their static member `remove` function.
 This behavior can be easily understood, since it's the same mechanism used
 by functions controlling file opening/creation/erasure:
 
@@ -320,14 +321,14 @@ All named resource creation functions take an optional
 [classref boost::interprocess::permissions permissions object] that can be
 configured with platform-dependant permissions.
 
-Since each mechanism can be emulated through diferent mechanisms
+Since each mechanism can be emulated through different mechanisms
 (a semaphore might be implement using mapped files or native semaphores)
 permissions types could vary when the implementation of a named resource
 changes (eg.: in Windows mutexes require `synchronize permissions`, but
 that's not the case of files).
 To avoid this, [*Boost.Interprocess] relies on file-like permissions,
 requiring file read-write-delete permissions to open named synchronization mechanisms
-(mutex, semaphores, etc.) and appropiate read or read-write-delete permissions for
+(mutex, semaphores, etc.) and appropriate read or read-write-delete permissions for
 shared memory. This approach has two advantages: it's similar to the UNIX philosophy
 and the programmer does not need to know how the named resource is implemented.
 
@@ -813,7 +814,7 @@ inmedially visible to other processes. However, the file contents on disk are
 not updated immediately, since that would hurt performance (writing to disk
 is several times slower than writing to memory). If the user wants to make sure
 that file's contents have been updated, it can flush a range from the view to disk.
-When the function returns, the flushing process has startd but there is not guarantee that
+When the function returns, the flushing process has started but there is no guarantee that
 all data has been written to disk:
 
 [c++]
@@ -2740,7 +2741,7 @@ file locking easier in the presence of exceptions, just like with mutexes:
    file_lock f_lock("my_file");
 
    {
-      //Construct a sharable lock with the filel lock.
+      //Construct a sharable lock with the file lock.
       //This will call "f_lock.sharable_lock()".
       sharable_lock<file_lock> sh_lock(f_lock);
 
@@ -2764,7 +2765,7 @@ file locking easier in the presence of exceptions, just like with mutexes:
    file_lock f_lock("my_file");
 
    {
-      //Construct a sharable lock with the filel lock.
+      //Construct an exclusive lock with the file lock.
       //This will call "f_lock.lock()".
       scoped_lock<file_lock> e_lock(f_lock);
 
@@ -3350,7 +3351,9 @@ To use a managed mapped file, you must include the following header:
    //    file to implement managed features.
    //!!  If anything fails, throws interprocess_exception
    //
-   managed_mapped_file mfile      (create_only,      "MyMappedFile",   //Mapped file name      65536);           //Mapped file size
+   managed_mapped_file mfile      ( create_only
+                                  , "MyMappedFile" //Mapped file name
+                                  , 65536);        //Mapped file size
 [c++]
 
    //1.  Opens a file
@@ -3361,7 +3364,10 @@ To use a managed mapped file, you must include the following header:
    //    to implement managed features.
    //!!  If anything fails, throws interprocess_exception
    //
-   managed_mapped_file mfile      (open_only,      "MyMappedFile");  //Mapped file name[c++]
+   managed_mapped_file mfile      ( open_only
+                                  , "MyMappedFile"); //Mapped file name
+
+[c++]
 
    //1.  If the file was previously created
    //    equivalent to "open_only".
@@ -3369,7 +3375,10 @@ To use a managed mapped file, you must include the following header:
    //
    //!!  If anything fails, throws interprocess_exception
    //
-   managed_mapped_file mfile      (open_or_create,      "MyMappedFile",   //Mapped file name      65536);           //Mapped file size
+   managed_mapped_file mfile      (open_or_create
+                                  , "MyMappedFile" //Mapped file name
+                                  , 65536);        //Mapped file size
+
 When the `managed_mapped_file` object is destroyed, the file is
 automatically unmapped, and all the resources are freed. To remove
 the file from the filesystem you could use standard C `std::remove`
@@ -3915,7 +3924,7 @@ Managed memory segments offer this functionality through `allocate_many()` funct
 There are 2 types of `allocate_many` functions:
 
 * Allocation of N buffers of memory with the same size.
-* Allocation ot N buffers of memory, each one of different size.
+* Allocation of N buffers of memory, each one of different size.
 
 [c++]
 
@@ -4012,9 +4021,8 @@ Here is the declaration of the function:
    std::pair<T *, bool>
       allocation_command( boost::interprocess::allocation_type command
                         , std::size_t limit_size
-                        , std::size_t preferred_size
-                        , std::size_t &received_size
-                        , T *reuse_ptr = 0);
+                        , size_type &prefer_in_recvd_out_size
+                        , T *&reuse_ptr);
 
 
 [*Preconditions for the function]:
@@ -4972,7 +4980,7 @@ An example using [classref boost::interprocess::cached_adaptive_pool cached_adap
 
 [*Boost.Interprocess] STL compatible allocators offer a STL compatible allocator
 interface and if they define their internal *pointer* typedef as a relative pointer,
-they can sbe used to place STL containers in shared memory, memory mapped files or
+they can be used to place STL containers in shared memory, memory mapped files or
 in a user defined memory segment.
 
 However, as Scott Meyers mentions in his Effective STL
@@ -5148,7 +5156,7 @@ Let's see an example:
 [section:containers_and_move Move semantics in Interprocess containers]
 
 [*Boost.Interprocess] containers support move semantics, which means that the contents
-of a container can be moved from a container two another one, without any copying. The
+of a container can be moved from a container to another one, without any copying. The
 contents of the source container are transferred to the target container and the source
 container is left in default-constructed state.
 
@@ -5741,9 +5749,9 @@ can be stored in a STL container, [classref boost::interprocess::shared_ptr shar
 can also be stored in [*Boost.Interprocess] containers.
 
 If a programmer just uses [classref boost::interprocess::shared_ptr shared_ptr]
-to be able to insert objects dynamically constructed in the managed segment
-in a container, but does not need to share the ownership of that object with
-other objects [classref boost::interprocess::unique_ptr unique_ptr] is a much
+to be able to insert dynamically constructed objects into a container constructed
+in the managed segment, but he does not need to share the ownership of that object with
+other objects [classref boost::interprocess::managed_unique_ptr managed_unique_ptr] is a much
 faster and easier to use alternative.
 
 [endsect]
@@ -5752,42 +5760,44 @@ faster and easier to use alternative.
 
 Unique ownership smart pointers are really useful to free programmers from
 manual resource liberation of non-shared objects. [*Boost.Interprocess]'
-[classref boost::interprocess::unique_ptr unique_ptr] is much like
+`unique_ptr` is much like
 [classref boost::interprocess::scoped_ptr scoped_ptr] but it's [*moveable]
 and can be easily inserted in [*Boost.Interprocess] containers.
-Here is the declaration of the unique pointer class:
+Interprocess had its own `unique_ptr` implementation but from Boost 1.57,
+[*Boost.Interprocess] uses the improved and generic `boost::unique_ptr`
+implementation. Here is the declaration of the unique pointer class:
 
 [c++]
 
    template <class T, class D>
    class unique_ptr;
 
-*  T is the type of the object pointed by [classref boost::interprocess::unique_ptr unique_ptr].
+*  T is the type of the object pointed by `unique_ptr`.
 *  D is the deleter that will erase the object type of the object pointed by
-   [classref boost::interprocess::unique_ptr unique_ptr] when the unique pointer
-   is destroyed (and if still owns ownership of the object). If the deleter defines
-   an internal `pointer` typedef, [classref boost::interprocess::unique_ptr unique_ptr]
+   the unique_ptr when the unique pointer
+   is destroyed (and if still has the ownership of the object). If the deleter defines
+   an internal `pointer` typedef, `unique_ptr`]
    will use an internal pointer of the same type. So if `D::pointer` is `offset_ptr<T>`
    the unique pointer will store a relative pointer instead of a raw one. This
-   allows placing [classref boost::interprocess::unique_ptr unique_ptr] in shared
+   allows placing `unique_ptr` in shared
    memory and memory-mapped files.
 
-[classref boost::interprocess::unique_ptr unique_ptr] can release the ownership of
+`unique_ptr` can release the ownership of
 the stored pointer so it's useful also to be used as a rollback function. One of the main
 properties of the class is that [*is not copyable, but only moveable]. When a unique
 pointer is moved to another one, the ownership of the pointer is transferred from
 the source unique pointer to the target unique pointer. If the target unique pointer
 owned an object, that object is first deleted before taking ownership of the new object.
 
-[classref boost::interprocess::unique_ptr unique_ptr] also offers auxiliary types to
+[*Boost.Interprocess] also offers auxiliary types to
 easily define and construct unique pointers that can be placed in managed segments
-and will correctly delete the owned object from the segment:
+and will correctly delete owned object from the segment:
 [classref boost::interprocess::managed_unique_ptr managed_unique_ptr]
 and
 [funcref boost::interprocess::make_managed_unique_ptr make_managed_unique_ptr]
 utilities.
 
-Here we see an example of the use [classref boost::interprocess::unique_ptr unique_ptr]
+Here we see an example of the use `unique_ptr`
 including creating containers of such objects:
 
 [import ../example/doc_unique_ptr.cpp]
@@ -6187,7 +6197,7 @@ when creating a named object are these:
    and meta-data for destruction (number of objects, etc...).
 
 *  Call the constructors of the object being created. If it's an array, one
-   construtor per array element.
+   constructor per array element.
 
 *  Unlock the recursive mutex.
 
@@ -6363,8 +6373,7 @@ that boost::interprocess::rbtree_best_fit class offers:
 
 *  The [*allocate()] function must return 0 if there is no more available memory.
    The memory returned by [*my_algorithm]
-   must be aligned to the most restrictive memory alignment of the system, for example,
-   to the value returned by *ipcdetail::alignment_of<boost::detail::max_align>::value*.
+   must be aligned to the most restrictive memory alignment of the system.
    This function should be executed with the synchronization capabilities offered
    by `typename mutex_family::mutex_type` interprocess_mutex. That means, that if we define
    `typedef mutex_family mutex_family;` then this function should offer
@@ -6580,7 +6589,7 @@ Interprocess also defines other index types:
 * [*boost::map_index] uses *boost::interprocess::map* as index type.
 
 * [*boost::null_index] that uses an dummy index type if the user just needs
-  anonymous allocations and wants to save some space and class instantations.
+  anonymous allocations and wants to save some space and class instantiations.
 
 Defining a new managed memory segment that uses the new index is easy. For
 example, a new managed shared memory that uses the new index:
@@ -6606,8 +6615,6 @@ example, a new managed shared memory that uses the new index:
 
 [section:acknowledgements_notes Acknowledgements, notes and links]
 
-[section:notes Notes]
-
 [section:notes_windows Notes for Windows users]
 
 [section:notes_windows_com_init COM Initialization]
@@ -6628,7 +6635,7 @@ want [*Boost.Interprocess] to initialize the COM library with another model, def
 
 [section:notes_windows_shm_folder Shared memory emulation folder]
 
-Shared memory (`shared_memory_object`) is implemented in windows using memory mapped files, placed in a
+Shared memory (`shared_memory_object`) is implemented in Windows using memory mapped files, placed in a
 shared directory in the shared documents folder (`SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders\Common AppData`).
 This directory name is the last bootup time obtained via COM calls (if `BOOST_INTERPROCESS_BOOTSTAMP_IS_LASTBOOTUPTIME`) defined
 or searching the system log for a startup event (the default implementation), so that each bootup shared memory is created in a new
@@ -6645,12 +6652,23 @@ If using the default implementation, (`BOOST_INTERPROCESS_BOOTSTAMP_IS_LASTBOOTU
 found, this might be due to some buggy software that floods or erases the event log.
 
 In any error case (shared documents folder is not defined or bootup time could not be obtained, the library throws an error. You still
-can use [*Boost.Interprocess] definining your own directory as the shared directory. Just define `BOOST_INTERPROCESS_SHARED_DIR_PATH`
-when using the library and that path will be used to place shared memory files.
+can use [*Boost.Interprocess] defining your own directory as the shared directory. When your shared directory is a compile-time constant,
+define `BOOST_INTERPROCESS_SHARED_DIR_PATH` when using the library and that path will be used to place shared memory files. When you have 
+to determine the shared directory at runtime, define `BOOST_INTERPROCESS_SHARED_DIR_FUNC` and implement the function 
+
+[c++]
+
+   namespace boost { 
+       namespace interprocess { 
+           namespace ipcdetail {
+               void get_shared_dir(std::string &shared_dir);
+           }
+       }
+   }
 
 [endsect]
 
-[section:boost:use_windows_h BOOST_USE_WINDOWS_H support]
+[section:boost_use_windows_h BOOST_USE_WINDOWS_H support]
 
 If `BOOST_USE_WINDOWS_H` is defined, <windows.h> and other windows SDK files are included,
 otherwise the library declares needed functions and structures to reduce the impact of including
@@ -6658,15 +6676,28 @@ those heavy headers.
 
 [endsect]
 
+[endsect]
+
 [section:notes_linux Notes for Linux users]
 
 [section:notes_linux_shm_folder Shared memory emulation folder]
 
-On systems without POSIX shared memory support shared memory objects are implemented as memory mapped files, using a directory
-placed in "/tmp" that can include (if `BOOST_INTERPROCESS_HAS_KERNEL_BOOTTIME` is defined) the last bootup time (if the Os supports it).
-As in Windows, in any error case obtaining this directory the library throws an error . You still can use
-[*Boost.Interprocess] definining your own directory as the shared directory. Just define `BOOST_INTERPROCESS_SHARED_DIR_PATH`
-when using the library and that path will be used to place shared memory files.
+On systems without POSIX shared memory support, shared memory objects are implemented as memory mapped files, using a directory
+placed in "/tmp" that can include (if `BOOST_INTERPROCESS_HAS_KERNEL_BOOTTIME` is defined) the last bootup time (if the OS supports it).
+As in Windows, in any error case obtaining this directory the library throws an error . When your shared directory is a compile-time constant,
+define `BOOST_INTERPROCESS_SHARED_DIR_PATH` when using the library and that path will be used to place shared memory files. When you have 
+to determine the shared directory at runtime, define `BOOST_INTERPROCESS_SHARED_DIR_FUNC` and implement the function 
+
+[c++]
+
+   namespace boost { 
+       namespace interprocess { 
+           namespace ipcdetail {
+               void get_shared_dir(std::string &shared_dir);
+           }
+       }
+   }
+
 
 [endsect]
 
@@ -6691,11 +6722,7 @@ change this overcommit behaviour.
 
 [endsect]
 
-[endsect]
-
 [section:thanks_to Thanks to...]
-
-[section:thanks_to_people People]
 
 Many people have contributed with ideas and revisions, so this is the place to
 thank them:
@@ -6734,14 +6761,141 @@ thank them:
 
 [endsect]
 
+[section:release_notes Release Notes]
+
+[section:release_notes_boost_1_71_00 Boost 1.71 Release]
+
+*  Fixed bugs:
+   * [@https://github.com/boostorg/interprocess/pull/85 GitHub #85 (['"warning: Implicit conversion loses integer precision"])].
+   * [@https://github.com/boostorg/interprocess/pull/86 GitHub #86 (['"warning: Possible misuse of comma operator"])].
+
 [endsect]
 
-[section:release_notes Release Notes]
+[section:release_notes_boost_1_70_00 Boost 1.70 Release]
+
+*  Fixed bugs:
+   * [@https://github.com/boostorg/interprocess/pull/51 GitHub Pull #51 (['"United handling of wait_for_single_object"])].
+   * [@https://github.com/boostorg/interprocess/pull/78 GitHub Pull #78 (['"Fix -Wextra-semi clang warnings"])].
+
+[endsect]
+
+[section:release_notes_boost_1_69_00 Boost 1.69 Release]
+
+* Deprecated GCC < 4.3 and MSVC < 9.0 (Visual 2008) compilers.
+
+*  Fixed bugs:
+   * [@https://github.com/boostorg/interprocess/issues/59 GitHub Issue #59 (['"warning: ISO C++ prohibits anonymous structs [-Wpedantic]"])].
+   * [@https://github.com/boostorg/interprocess/issues/60 GitHub Issue #60 (['"warning: cast between incompatible function types from boost::interprocess::winapi::farproc_t..."])].
+   * [@https://github.com/boostorg/interprocess/issues/61 GitHub Issue #61 (['"warning: struct winapi::*_BIPC has virtual functions and accessible non-virtual destructor"])].
+   * [@https://github.com/boostorg/interprocess/issues/64 GitHub Issue #64 (['"UBSan: runtime error: load of value 4294967295, (...) for type 'boost::interprocess::mode_t'"])].
+   * [@https://github.com/boostorg/interprocess/pull/68   GitHub Pull #68 (['"Prepare for C++20 and remove "throw()" usage"])].
+   * [@https://github.com/boostorg/interprocess/pull/70   GitHub Pull #70 (['"Fix deadlock in named_condition::notify_one"])].
+
+[endsect]
+
+[section:release_notes_boost_1_68_00 Boost 1.68 Release]
+*  Fixed bugs:
+   * [@https://github.com/boostorg/interprocess/issues/53 GitHub Issue #53 (['"Crash waiting on condition variable from multiple processes in do_wait()"])].
+   * [@https://github.com/boostorg/interprocess/issues/54 GitHub Issue #54 (['"fill_system_message() ignores an error returned by winapi::format_message()"])].
+
+[endsect]
+
+[section:release_notes_boost_1_67_00 Boost 1.67 Release]
+*  Fixed bugs:
+   * [@https://github.com/boostorg/interprocess/pull/45 GitHub Pull #45 (['"Make intrusive_ptr move constructible/assignable"])].
+   * [@https://github.com/boostorg/interprocess/pull/48 GitHub Pull #48 (['"Win32: Fix read of reg_expand_sz type"])].
+
+[endsect]
+
+[section:release_notes_boost_1_66_00 Boost 1.66 Release]
+*  Fixed bugs:
+   * [@https://github.com/boostorg/interprocess/pull/41 GitHub Pull #41 (['"Data race in boost::interprocess::rbtree_best_fit"])].
+
+[endsect]
+
+[section:release_notes_boost_1_65_00 Boost 1.65 Release]
+*  Fixed bugs:
+   * [@https://github.com/boostorg/interprocess/pull/37 GitHub Pull #37 (['"Conditionally replace deprecated/removed std::auto_ptr..."])].
+
+[endsect]
+
+[section:release_notes_boost_1_64_00 Boost 1.64 Release]
+*  Fixed bugs:
+   * [@https://svn.boost.org/trac/boost/ticket/12617 Trac #12617 (['"clock_gettime not available on OS X 10.11"])].
+   * [@https://svn.boost.org/trac/boost/ticket/12744 Trac #12744 (['"winapi::set_timer_resolution inadvertently changes timer resolution (Windows)"])].
+   * [@https://github.com/boostorg/interprocess/pull/32 GitHub Pull #32 (['"Conform to std::pointer_traits requirements"])].
+   * [@https://github.com/boostorg/interprocess/pull/33 GitHub Pull #33 (['"explicit cast to derived class" and "64/32 bit processes sharing"])].
+   * [@https://github.com/boostorg/interprocess/pull/34 GitHub Pull #34 (['"Update example to use multi_index::member instead of BOOST_MULTI_INDEX_MEMBER"])].
+   * [@https://github.com/boostorg/interprocess/pull/35 GitHub Pull #35 (['"Fixed options for cross-compilation"])].
+
+* New experimental option `BOOST_INTERPROCESS_BOOTSTAMP_IS_SESSION_MANAGER_BASED` from Windows systems.
+  This option derives the unique bootstamp used to name the folder where shared memory is placed from registry values associated
+  with the session manager. This option only works on Vista and later systems and might be more stable than the default version.
+
+[endsect]
+
+[section:release_notes_boost_1_63_00 Boost 1.63 Release]
+*  Fixed bugs:
+   * [@https://svn.boost.org/trac/boost/ticket/12499 Trac #12499 (['"Memory allocation fails"])].
+   * [@https://github.com/boostorg/interprocess/pull/30 GitHub Pull #30 (['"Provide extension point so library user can provide default temp folder"])].
+   * [@https://github.com/boostorg/interprocess/pull/31 GitHub Pull #31 (['"Add xsi_key(key_t) constructor"])].
+
+[endsect]
+
+[section:release_notes_boost_1_62_00 Boost 1.62 Release]
+*  Fixed bugs:
+   * [@https://github.com/boostorg/interprocess/pull/27 GitHub Pull #27 (['"Fix undefined behavior"])].
+
+[endsect]
+
+[section:release_notes_boost_1_61_00 Boost 1.61 Release]
+*  Fixed bugs:
+   * [@https://github.com/boostorg/interprocess/pull/23 GitHub Pull #23 (['"Fixed case sensitive for linux mingw"])].
+
+[endsect]
+
+[section:release_notes_boost_1_60_00 Boost 1.60 Release]
+*  Improved [classref boost::interprocess::offset_ptr offset_ptr] performance and removed any undefined behaviour. No
+   special cases needed for different compilers.
+*  Fixed bugs:
+   * [@https://svn.boost.org/trac/boost/ticket/11699 Trac #11699 (['"Forward declarations of std templates causes stack corruption under Visual Studio 2015"])].
+
+[endsect]
+
+[section:release_notes_boost_1_59_00 Boost 1.59 Release]
+*  Fixed bugs:
+   * [@https://svn.boost.org/trac/boost/ticket/5139 Trac #5139 (['"Initial Stream Position in Boost.Interprocess.Vectorstream"])].
+   * [@https://github.com/boostorg/interprocess/pull/19 GitHub Pull #19 (['"Fix exception visibility"])]. Thanks to Romain-Geissler.
+
+[endsect]
+
+[section:release_notes_boost_1_58_00 Boost 1.58 Release]
+*  Reduced some compile-time dependencies. Updated to Boost.Container changes.
+*  Fixed bugs:
+   * [@https://github.com/boostorg/interprocess/pull/13 GitHub Pull #13 (['"haiku: we don't have XSI shared memory, so don't try to use it"])].
+     Thanks to Jessica Hamilton.
+
+[endsect]
+
+[section:release_notes_boost_1_57_00 Boost 1.57 Release]
+*  Removed `unique_ptr`, now forwards boost::interprocess::unique_ptr to the general purpose
+   `boost::movelib::unique_ptr` class from [*Boost.Move]. This implementation is closer to the standard
+   `std::unique_ptr` implementation and it's better maintained.
+*  Fixed bugs:
+   * [@https://svn.boost.org/trac/boost/ticket/10262 Trac #10262 (['"AIX 6.1 bug with variable definition hz"])].
+   * [@https://svn.boost.org/trac/boost/ticket/10229 Trac #10229 (['"Compiling errors in interprocess\detail\os_file_functions.hpp"])].
+   * [@https://svn.boost.org/trac/boost/ticket/10506 Trac #10506 (['"Infinite loop in create_or_open_file"])].
+   * [@https://github.com/boostorg/interprocess/pull/11 GitHub Pull #11 (['"Compile fix for BOOST_USE_WINDOWS_H"])].
+ 
+*  Reorganized Doxygen marks to obtain a better header reference.
+
+[endsect]
 
 [section:release_notes_boost_1_56_00 Boost 1.56 Release]
 *  Fixed bugs:
    * [@https://svn.boost.org/trac/boost/ticket/9221 Trac #9221 (['"message_queue deadlock on linux"])].
    * [@https://svn.boost.org/trac/boost/ticket/9226 Trac #9226 (['"On some computers, Common Appdata is empty in registry, so boost interprocess cannot work"])].
+   * [@https://svn.boost.org/trac/boost/ticket/9262 Trac #9262 (['"windows_intermodule_singleton breaks when calling a Debug dll from a Release executable"])].
    * [@https://svn.boost.org/trac/boost/ticket/9284 Trac #9284 (['"WaitForSingleObject(mutex) must handle WAIT_ABANDONED"])].
    * [@https://svn.boost.org/trac/boost/ticket/9285 Trac #9285 (['"CreateMutex returns NULL if fails"])].
    * [@https://svn.boost.org/trac/boost/ticket/9288 Trac #9288 (['"timed_wait does not check if it has expired"])].
@@ -6754,8 +6908,8 @@ thank them:
    * [@https://svn.boost.org/trac/boost/ticket/10011 Trac #10011 (['"segment_manager::find( unique_instance_t* ) fails to compile"])].
    * [@https://svn.boost.org/trac/boost/ticket/10021 Trac #10021 (['"Interprocess and BOOST_USE_WINDOWS_H"])].
    * [@https://svn.boost.org/trac/boost/ticket/10230 Trac #10230 (['"No Sleep in interprocess::winapi"])].
-   * [@https://github.com/boostorg/interprocess/pull/2 GitHub #2] (['"Provide support for the Cray C++ compiler. The Cray compiler defines __GNUC__"]]).
-   * [@https://github.com/boostorg/interprocess/pull/3 GitHub #3] (['"Fix/mingw interprocess_exception throw in file_wrapper::priv_open_or_create"]]).
+   * [@https://github.com/boostorg/interprocess/pull/2 GitHub Pull #2] (['"Provide support for the Cray C++ compiler. The Cray compiler defines __GNUC__"]]).
+   * [@https://github.com/boostorg/interprocess/pull/3 GitHub Pull #3] (['"Fix/mingw interprocess_exception throw in file_wrapper::priv_open_or_create"]]).
 
 *  [*ABI breaking]: [@https://svn.boost.org/trac/boost/ticket/9221 #9221] showed
    that `BOOST_INTERPROCESS_MSG_QUEUE_CIRCULAR_INDEX` option of message queue,
@@ -6780,29 +6934,31 @@ thank them:
 
 [section:release_notes_boost_1_55_00 Boost 1.55 Release]
 
-*  Fixed bugs [@https://svn.boost.org/trac/boost/ticket/7156 #7156] (['"interprocess buffer streams leak memory on construction"]]).
-              [@https://svn.boost.org/trac/boost/ticket/7164 #7164] (['"Two potential bugs with b::int::vector of b::i::weak_ptr"]]).
-              [@https://svn.boost.org/trac/boost/ticket/7860 #7860] (['"smart_ptr's yield_k and spinlock utilities can improve spinlock-based sychronization primitives"]]).
-              [@https://svn.boost.org/trac/boost/ticket/8277 #8277] (['"docs for named_mutex erroneously refer to interprocess_mutex"]]).
-              [@https://svn.boost.org/trac/boost/ticket/8976 #8976] (['"shared_ptr fails to compile if used with a scoped_allocator"]]).
-              [@https://svn.boost.org/trac/boost/ticket/9008 #9008] (['"conditions variables fast enough only when opening a multiprocess browser"]]).
-              [@https://svn.boost.org/trac/boost/ticket/9065 #9065] (['"atomic_cas32 inline assembly wrong on ppc32"]]).
-              [@https://svn.boost.org/trac/boost/ticket/9073 #9073] (['"Conflict names 'realloc'"]]).
+*  Fixed bugs:
+   * [@https://svn.boost.org/trac/boost/ticket/7156 #7156] (['"interprocess buffer streams leak memory on construction"]]).
+   * [@https://svn.boost.org/trac/boost/ticket/7164 #7164] (['"Two potential bugs with b::int::vector of b::i::weak_ptr"]]).
+   * [@https://svn.boost.org/trac/boost/ticket/7860 #7860] (['"smart_ptr's yield_k and spinlock utilities can improve spinlock-based sychronization primitives"]]).
+   * [@https://svn.boost.org/trac/boost/ticket/8277 #8277] (['"docs for named_mutex erroneously refer to interprocess_mutex"]]).
+   * [@https://svn.boost.org/trac/boost/ticket/8976 #8976] (['"shared_ptr fails to compile if used with a scoped_allocator"]]).
+   * [@https://svn.boost.org/trac/boost/ticket/9008 #9008] (['"conditions variables fast enough only when opening a multiprocess browser"]]).
+   * [@https://svn.boost.org/trac/boost/ticket/9065 #9065] (['"atomic_cas32 inline assembly wrong on ppc32"]]).
+   * [@https://svn.boost.org/trac/boost/ticket/9073 #9073] (['"Conflict names 'realloc'"]]).
 
 [endsect]
 
 [section:release_notes_boost_1_54_00 Boost 1.54 Release]
 
 *  Added support for platform-specific flags to mapped_region (ticket #8030)
-*  Fixed bugs [@https://svn.boost.org/trac/boost/ticket/7484 #7484],
-              [@https://svn.boost.org/trac/boost/ticket/7598 #7598],
-              [@https://svn.boost.org/trac/boost/ticket/7682 #7682],
-              [@https://svn.boost.org/trac/boost/ticket/7923 #7923],
-              [@https://svn.boost.org/trac/boost/ticket/7924 #7924],
-              [@https://svn.boost.org/trac/boost/ticket/7928 #7928],
-              [@https://svn.boost.org/trac/boost/ticket/7936 #7936],
-              [@https://svn.boost.org/trac/boost/ticket/8521 #8521],
-              [@https://svn.boost.org/trac/boost/ticket/8595 #8595].
+*  Fixed bugs:
+   * [@https://svn.boost.org/trac/boost/ticket/7484 #7484],
+   * [@https://svn.boost.org/trac/boost/ticket/7598 #7598],
+   * [@https://svn.boost.org/trac/boost/ticket/7682 #7682],
+   * [@https://svn.boost.org/trac/boost/ticket/7923 #7923],
+   * [@https://svn.boost.org/trac/boost/ticket/7924 #7924],
+   * [@https://svn.boost.org/trac/boost/ticket/7928 #7928],
+   * [@https://svn.boost.org/trac/boost/ticket/7936 #7936],
+   * [@https://svn.boost.org/trac/boost/ticket/8521 #8521],
+   * [@https://svn.boost.org/trac/boost/ticket/8595 #8595].
 
 *  [*ABI breaking]: Changed bootstamp function in Windows to use EventLog service start time
    as system bootup time. Previously used `LastBootupTime` from WMI was unstable with
@@ -7067,7 +7223,7 @@ thank them:
 *  Added auxiliary utilities to ease the definition and construction of
    [classref boost::interprocess::shared_ptr shared_ptr],
    [classref boost::interprocess::weak_ptr weak_ptr] and
-   [classref boost::interprocess::unique_ptr unique_ptr]. Added explanations
+   `unique_ptr`. Added explanations
    and examples of these smart pointers in the documentation.
 
 *  Optimized vector:
@@ -7335,11 +7491,11 @@ But the work to implement PF_UNIX-like sockets and doors would be huge
 
 [endsect]
 
-[include auto_index_helpers.qbk]
-
 [section:indexes_reference Indexes and Reference]
 
 [section:index Indexes]
+
+[include auto_index_helpers.qbk]
 
 [named_index class_name Class Index]
 [named_index typedef_name Typedef Index]

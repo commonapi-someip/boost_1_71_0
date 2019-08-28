@@ -12,9 +12,8 @@
 #define BOOST_INTERPROCESS_TEST_CHECK_EQUAL_CONTAINERS_HPP
 
 #include <boost/interprocess/detail/config_begin.hpp>
-#include <functional>
-#include <iostream>
-#include <algorithm>
+// container/detail
+#include <boost/container/detail/iterator.hpp>
 #include <boost/container/detail/pair.hpp>
 
 namespace boost{
@@ -23,17 +22,17 @@ namespace test{
 
 template< class T1, class T2>
 bool CheckEqual( const T1 &t1, const T2 &t2
-               , typename boost::container::container_detail::enable_if_c
-                  <!boost::container::container_detail::is_pair<T1>::value &&
-                   !boost::container::container_detail::is_pair<T2>::value
+               , typename boost::container::dtl::enable_if_c
+                  <!boost::container::dtl::is_pair<T1>::value &&
+                   !boost::container::dtl::is_pair<T2>::value
                   >::type* = 0)
 {  return t1 == t2;  }
 
 template< class Pair1, class Pair2>
 bool CheckEqual( const Pair1 &pair1, const Pair2 &pair2
-               , typename boost::container::container_detail::enable_if_c
-                  <boost::container::container_detail::is_pair<Pair1>::value &&
-                   boost::container::container_detail::is_pair<Pair2>::value
+               , typename boost::container::dtl::enable_if_c
+                  <boost::container::dtl::is_pair<Pair1>::value &&
+                   boost::container::dtl::is_pair<Pair2>::value
                   >::type* = 0)
 {
    return CheckEqual(pair1.first, pair2.first) && CheckEqual(pair1.second, pair2.second);
@@ -50,7 +49,8 @@ bool CheckEqualContainers(MyShmCont *shmcont, MyStdCont *stdcont)
 
    typename MyShmCont::iterator itshm(shmcont->begin()), itshmend(shmcont->end());
    typename MyStdCont::iterator itstd(stdcont->begin());
-   typename MyStdCont::size_type dist = (typename MyStdCont::size_type)std::distance(itshm, itshmend);
+   typename MyStdCont::size_type dist =
+      typename MyStdCont::size_type(boost::container::iterator_distance(itshm, itshmend));
    if(dist != shmcont->size()){
       return false;
    }

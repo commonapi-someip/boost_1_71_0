@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////
 //  Copyright 2011 John Maddock. Distributed under the Boost
 //  Software License, Version 1.0. (See accompanying file
-//  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_
+//  LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt
 
 #define BOOST_CHRONO_HEADER_ONLY
 
@@ -294,31 +294,31 @@ struct tester
    }
    double test_left_shift()
    {
-      int shift = std::numeric_limits<T>::is_bounded ? std::numeric_limits<T>::digits : bits_wanted;
-      shift /= 2;
+      int max_shift = std::numeric_limits<T>::is_bounded ? std::numeric_limits<T>::digits : bits_wanted;
+      int shift = 0;
       stopwatch<boost::chrono::high_resolution_clock> w;
       for(unsigned i = 0; i < 1000; ++i)
       {
          for(unsigned i = 0; i < b.size(); ++i)
-            a[i] = b[i] << shift;
+            a[i] = b[i] << (shift++ % max_shift);
       }
       return boost::chrono::duration_cast<boost::chrono::duration<double> >(w.elapsed()).count();
    }
    double test_right_shift()
    {
-      int shift = std::numeric_limits<T>::is_bounded ? std::numeric_limits<T>::digits : bits_wanted;
-      shift /= 2;
+      int max_shift = 2 + std::numeric_limits<T>::is_bounded ? std::numeric_limits<T>::digits : bits_wanted;
+      int shift  = 0;
       stopwatch<boost::chrono::high_resolution_clock> w;
       for(unsigned i = 0; i < 1000; ++i)
       {
          for(unsigned i = 0; i < b.size(); ++i)
-            a[i] = b[i] >> shift;
+            a[i] = b[i] >> (shift++) % max_shift;
       }
       return boost::chrono::duration_cast<boost::chrono::duration<double> >(w.elapsed()).count();
    }
    double test_gcd()
    {
-      using boost::math::gcd;
+      using boost::integer::gcd;
       stopwatch<boost::chrono::high_resolution_clock> w;
       for(unsigned i = 0; i < 1000; ++i)
       {

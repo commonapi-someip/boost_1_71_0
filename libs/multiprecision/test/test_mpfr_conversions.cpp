@@ -2,7 +2,7 @@
 //  Copyright Christopher Kormanyos 2002 - 2011.
 //  Copyright 2011 John Maddock. Distributed under the Boost
 //  Software License, Version 1.0. (See accompanying file
-//  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_
+//  LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt
 //
 // This work is based on an earlier work:
 // "Algorithm 910: A Portable C++ Multiple-Precision System for Special-Function Calculations",
@@ -112,7 +112,7 @@ int main()
    BOOST_TEST(f0b.precision() == 100);
    f0a = f100;
    BOOST_TEST(f0a == 3);
-   BOOST_TEST(f0a.precision() == 100);
+   BOOST_TEST(f0a.precision() == 100); // precision preserved on assignment
 
    f100 = f50;
    BOOST_TEST(f100 == 2);

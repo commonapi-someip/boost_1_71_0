@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////
 //  Copyright 2011 John Maddock. Distributed under the Boost
 //  Software License, Version 1.0. (See accompanying file
-//  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_
+//  LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt
 
 #include "setup.hpp"
 #include "table_type.hpp"
@@ -18,6 +18,20 @@ void expected_results()
    // Define the max and mean errors expected for
    // various compilers and platforms.
    //
+   add_expected_result(
+      ".*",                          // compiler
+      ".*",                          // stdlib
+      ".*",                          // platform
+      ".*mpfr_float_backend<0>.*",  // test type(s)
+      ".*",                          // test data group
+      ".*", 20000000, 1000000);      // test function
+   add_expected_result(
+      ".*",                          // compiler
+      ".*",                          // stdlib
+      ".*",                          // platform
+      ".*gmp_float<0>.*",  // test type(s)
+      ".*",                          // test data group
+      ".*", 20000000, 1000000);      // test function
    add_expected_result(
       ".*",                          // compiler
       ".*",                          // stdlib

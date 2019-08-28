@@ -4,6 +4,7 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #define BOOST_THREAD_VERSION 2
+#define BOOST_TEST_MODULE Boost.Threads: shared_mutex_locks_chrono test suite
 
 #include <boost/test/unit_test.hpp>
 #include <boost/thread/thread.hpp>
@@ -20,7 +21,7 @@
     }
 
 
-void test_timed_lock_shared_times_out_if_write_lock_held()
+BOOST_AUTO_TEST_CASE(test_timed_lock_shared_times_out_if_write_lock_held)
 {
     boost::shared_mutex rw_mutex;
     boost::mutex finish_mutex;
@@ -56,7 +57,7 @@ void test_timed_lock_shared_times_out_if_write_lock_held()
     writer.join();
 }
 
-void test_timed_lock_shared_succeeds_if_no_lock_held()
+BOOST_AUTO_TEST_CASE(test_timed_lock_shared_succeeds_if_no_lock_held)
 {
     boost::shared_mutex rw_mutex;
     boost::mutex finish_mutex;
@@ -64,7 +65,6 @@ void test_timed_lock_shared_succeeds_if_no_lock_held()
 
     boost::chrono::steady_clock::time_point const start=boost::chrono::steady_clock::now();
     boost::chrono::steady_clock::time_point const timeout=start+boost::chrono::milliseconds(500);
-    boost::chrono::milliseconds const timeout_resolution(50);
     bool timed_lock_succeeded=rw_mutex.try_lock_shared_until(timeout);
     BOOST_CHECK(boost::chrono::steady_clock::now()<timeout);
     BOOST_CHECK(timed_lock_succeeded);
@@ -85,7 +85,7 @@ void test_timed_lock_shared_succeeds_if_no_lock_held()
 
 }
 
-void test_timed_lock_shared_succeeds_if_read_lock_held()
+BOOST_AUTO_TEST_CASE(test_timed_lock_shared_succeeds_if_read_lock_held)
 {
     boost::shared_mutex rw_mutex;
     boost::mutex finish_mutex;
@@ -98,7 +98,6 @@ void test_timed_lock_shared_succeeds_if_read_lock_held()
 
     boost::chrono::steady_clock::time_point const start=boost::chrono::steady_clock::now();
     boost::chrono::steady_clock::time_point const timeout=start+boost::chrono::milliseconds(500);
-    boost::chrono::milliseconds const timeout_resolution(50);
     bool timed_lock_succeeded=rw_mutex.try_lock_shared_until(timeout);
     BOOST_CHECK(boost::chrono::steady_clock::now()<timeout);
     BOOST_CHECK(timed_lock_succeeded);
@@ -121,7 +120,7 @@ void test_timed_lock_shared_succeeds_if_read_lock_held()
     reader.join();
 }
 
-void test_timed_lock_times_out_if_write_lock_held()
+BOOST_AUTO_TEST_CASE(test_timed_lock_times_out_if_write_lock_held)
 {
     boost::shared_mutex rw_mutex;
     boost::mutex finish_mutex;
@@ -157,7 +156,7 @@ void test_timed_lock_times_out_if_write_lock_held()
     writer.join();
 }
 
-void test_timed_lock_succeeds_if_no_lock_held()
+BOOST_AUTO_TEST_CASE(test_timed_lock_succeeds_if_no_lock_held)
 {
     boost::shared_mutex rw_mutex;
     boost::mutex finish_mutex;
@@ -165,7 +164,6 @@ void test_timed_lock_succeeds_if_no_lock_held()
 
     boost::chrono::steady_clock::time_point const start=boost::chrono::steady_clock::now();
     boost::chrono::steady_clock::time_point const timeout=start+boost::chrono::milliseconds(500);
-    boost::chrono::milliseconds const timeout_resolution(50);
     bool timed_lock_succeeded=rw_mutex.try_lock_until(timeout);
     BOOST_CHECK(boost::chrono::steady_clock::now()<timeout);
     BOOST_CHECK(timed_lock_succeeded);
@@ -186,7 +184,7 @@ void test_timed_lock_succeeds_if_no_lock_held()
 
 }
 
-void test_timed_lock_times_out_if_read_lock_held()
+BOOST_AUTO_TEST_CASE(test_timed_lock_times_out_if_read_lock_held)
 {
     boost::shared_mutex rw_mutex;
     boost::mutex finish_mutex;
@@ -222,7 +220,7 @@ void test_timed_lock_times_out_if_read_lock_held()
     reader.join();
 }
 
-void test_timed_lock_times_out_but_read_lock_succeeds_if_read_lock_held()
+BOOST_AUTO_TEST_CASE(test_timed_lock_times_out_but_read_lock_succeeds_if_read_lock_held)
 {
     boost::shared_mutex rw_mutex;
     boost::mutex finish_mutex;
@@ -252,23 +250,6 @@ void test_timed_lock_times_out_but_read_lock_succeeds_if_read_lock_held()
 
     finish_lock.unlock();
     reader.join();
-}
-
-
-boost::unit_test::test_suite* init_unit_test_suite(int, char*[])
-{
-    boost::unit_test::test_suite* test =
-        BOOST_TEST_SUITE("Boost.Threads: shared_mutex test suite");
-
-    test->add(BOOST_TEST_CASE(&test_timed_lock_shared_times_out_if_write_lock_held));
-    test->add(BOOST_TEST_CASE(&test_timed_lock_shared_succeeds_if_no_lock_held));
-    test->add(BOOST_TEST_CASE(&test_timed_lock_shared_succeeds_if_read_lock_held));
-    test->add(BOOST_TEST_CASE(&test_timed_lock_times_out_if_write_lock_held));
-    test->add(BOOST_TEST_CASE(&test_timed_lock_times_out_if_read_lock_held));
-    test->add(BOOST_TEST_CASE(&test_timed_lock_succeeds_if_no_lock_held));
-    test->add(BOOST_TEST_CASE(&test_timed_lock_times_out_but_read_lock_succeeds_if_read_lock_held));
-
-    return test;
 }
 
 #else

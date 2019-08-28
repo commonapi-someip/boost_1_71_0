@@ -203,6 +203,15 @@ void test()
       val = static_cast<T>("nan");
       BOOST_CHECK((boost::math::isnan)(val));
    }
+   //
+   // Bug cases:
+   //
+   // https://github.com/boostorg/multiprecision/issues/113
+   //
+   {
+      T val("99.9809");
+      BOOST_CHECK_EQUAL(val.str(3, std::ios_base::fixed), "99.981");
+   }
 }
 
 template <class T>
@@ -291,6 +300,32 @@ void test_round_trip()
    }
 }
 
+#ifdef TEST_FLOAT128
+void test_hexadecimal_floating_point()
+{
+   using boost::multiprecision::float128;
+
+   float128 x = 0x1p+0Q;
+
+   std::string s = x.str(0, std::ios_base::fmtflags(std::ios_base::fixed | std::ios_base::scientific));
+   BOOST_CHECK_EQUAL(s, "0x1p+0");
+
+   s = x.str(0, std::ios_base::fmtflags(std::ios_base::floatfield));
+   BOOST_CHECK_EQUAL(s, "0x1p+0");
+
+   x = -1;
+   s = x.str(0, std::ios_base::fmtflags(std::ios_base::floatfield));
+   BOOST_CHECK_EQUAL(s, "-0x1p+0");
+
+   // hexadecimal representation of pi; test a round trip:
+   float128 pi1 = 0x1.921fb54442d18469898cc51701b8p+1Q;
+   s = pi1.str(0, std::ios_base::fmtflags(std::ios_base::floatfield));
+   float128 pi2(s);
+   BOOST_CHECK_EQUAL(pi1, pi2);
+
+}
+#endif
+
 int main()
 {
 #ifdef TEST_MPFR_50
@@ -327,6 +362,7 @@ int main()
 #endif
 #ifdef TEST_FLOAT128
    test<boost::multiprecision::float128>();
+   test_hexadecimal_floating_point();
 #ifndef BOOST_INTEL
    test_round_trip<boost::multiprecision::float128>();
 #endif

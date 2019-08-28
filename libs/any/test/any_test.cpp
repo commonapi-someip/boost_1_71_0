@@ -8,7 +8,7 @@
 #include <vector>
 #include <utility>
 
-#include "boost/any.hpp"
+#include <boost/any.hpp>
 #include "test.hpp"
 
 namespace any_tests
@@ -41,6 +41,7 @@ namespace any_tests // test suite
     void test_with_func();
     void test_clear();
     void test_vectors();
+    void test_addressof();
 
     const test_case test_cases[] =
     {
@@ -56,7 +57,8 @@ namespace any_tests // test suite
         { "storing an array inside",        test_with_array        },
         { "implicit cast of returned value",test_with_func         },
         { "clear() methods",                test_clear             },
-        { "testing with vectors",           test_vectors           }
+        { "testing with vectors",           test_vectors           },
+        { "class with operator&()",         test_addressof         }
     };
 
     const test_case_iterator begin = test_cases;
@@ -94,7 +96,7 @@ namespace any_tests // test definitions
 
         check_true(value.empty(), "empty");
         check_null(any_cast<int>(&value), "any_cast<int>");
-        check_equal(value.type(), typeid(void), "type");
+        check_equal(value.type(), boost::typeindex::type_id<void>(), "type");
     }
 
     void test_converting_ctor()
@@ -103,7 +105,7 @@ namespace any_tests // test definitions
         any value = text;
 
         check_false(value.empty(), "empty");
-        check_equal(value.type(), typeid(std::string), "type");
+        check_equal(value.type(), boost::typeindex::type_id<std::string>(), "type");
         check_null(any_cast<int>(&value), "any_cast<int>");
         check_non_null(any_cast<std::string>(&value), "any_cast<std::string>");
         check_equal(
@@ -120,7 +122,7 @@ namespace any_tests // test definitions
         any original = text, copy = original;
 
         check_false(copy.empty(), "empty");
-        check_equal(original.type(), copy.type(), "type");
+        check_equal(boost::typeindex::type_index(original.type()), copy.type(), "type");
         check_equal(
             any_cast<std::string>(original), any_cast<std::string>(copy),
             "comparing cast copy against original");
@@ -140,7 +142,7 @@ namespace any_tests // test definitions
         any * assign_result = &(copy = original);
 
         check_false(copy.empty(), "empty");
-        check_equal(original.type(), copy.type(), "type");
+        check_equal(boost::typeindex::type_index(original.type()), copy.type(), "type");
         check_equal(
             any_cast<std::string>(original), any_cast<std::string>(copy),
             "comparing cast copy against cast original");
@@ -161,7 +163,7 @@ namespace any_tests // test definitions
         any * assign_result = &(value = text);
 
         check_false(value.empty(), "type");
-        check_equal(value.type(), typeid(std::string), "type");
+        check_equal(value.type(), boost::typeindex::type_id<std::string>(), "type");
         check_null(any_cast<int>(&value), "any_cast<int>");
         check_non_null(any_cast<std::string>(&value), "any_cast<std::string>");
         check_equal(
@@ -194,7 +196,7 @@ namespace any_tests // test definitions
 
         check_true(original.empty(), "empty on original");
         check_false(swapped.empty(), "empty on swapped");
-        check_equal(swapped.type(), typeid(std::string), "type");
+        check_equal(swapped.type(), boost::typeindex::type_id<std::string>(), "type");
         check_equal(
             text, any_cast<std::string>(swapped),
             "comparing swapped copy against original text");
@@ -267,8 +269,8 @@ namespace any_tests // test definitions
         check_false(value1.empty(), "type");
         check_false(value2.empty(), "type");
 
-        check_equal(value1.type(), typeid(const char*), "type");
-        check_equal(value2.type(), typeid(const char*), "type");
+        check_equal(value1.type(), boost::typeindex::type_id<const char*>(), "type");
+        check_equal(value2.type(), boost::typeindex::type_id<const char*>(), "type");
         
         check_non_null(any_cast<const char*>(&value1), "any_cast<const char*>");
         check_non_null(any_cast<const char*>(&value2), "any_cast<const char*>");
@@ -357,12 +359,45 @@ namespace any_tests // test definitions
         check_equal(vec1.back(), 7, "back value of second vector extracted from boost::any");
         check_equal(vec1.front(), 7, "front value of second vector extracted from boost::any");
 
-    } 
+    }
+
+    template<typename T>
+    class class_with_address_op {
+    public:
+        class_with_address_op(const T* p)
+            : ptr(p)
+        {}
+
+	    const T** operator &() {
+            return &ptr;
+        }
+
+        const T* get() const {
+            return ptr;
+        }
+
+    private:
+        const T* ptr;
+    };
+
+    void test_addressof()
+    {
+        int val = 10;
+        const int* ptr = &val;
+        class_with_address_op<int> obj(ptr);
+        boost::any test_val(obj);
+
+        class_with_address_op<int> returned_obj = boost::any_cast<class_with_address_op<int> >(test_val);
+        check_equal(&val, returned_obj.get(), "any_cast incorrectly works with type that has operator&(): addresses differ");
+
+        check_true(!!boost::any_cast<class_with_address_op<int> >(&test_val), "any_cast incorrectly works with type that has operator&()");
+        check_equal(boost::unsafe_any_cast<class_with_address_op<int> >(&test_val)->get(), ptr, "unsafe_any_cast incorrectly works with type that has operator&()");
+    }
 
 }
 
 // Copyright Kevlin Henney, 2000, 2001. All rights reserved.
-// Copyright Antony Polukhin, 2013-2014.
+// Copyright Antony Polukhin, 2013-2019.
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at

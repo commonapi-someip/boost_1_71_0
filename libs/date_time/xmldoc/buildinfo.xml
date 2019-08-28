@@ -119,20 +119,20 @@
   <bridgehead renderas="sect3">Directory Structure</bridgehead>
   <para>
     The directory tree has the following structure:
-    <programlisting>/boost/date_time                    -- common headers and template code
-/boost/date_time/gregorian          -- Gregorian date system header files
-/boost/date_time/posix_time         -- Posix time system headers
-/boost/date_time/local_time         -- Local time system headers
-/libs/date_time/build               -- build files and output directory
-/libs/date_time/test                -- test battery for generic code
-/libs/date_time/test/gregorian      -- test battery for the Gregorian system
-/libs/date_time/test/posix_time     -- test battery for the posix_time system
-/libs/date_time/test/local_time     -- test battery for the local_time system
-/libs/date_time/examples/gregorian  -- example programs for dates
-/libs/date_time/examples/posix_time -- time example programs
-/libs/date_time/examples/local_time -- nifty example programs
-/libs/date_time/src/gregorian       -- cpp files for libboost_date_time
-/libs/date_time/src/posix_time      -- empty (one file, but no source code...)</programlisting>
+    <programlisting>/boost/date_time                   -- common headers and template code
+/boost/date_time/gregorian         -- Gregorian date system header files
+/boost/date_time/posix_time        -- Posix time system headers
+/boost/date_time/local_time        -- Local time system headers
+/libs/date_time/build              -- build files and output directory
+/libs/date_time/test               -- test battery for generic code
+/libs/date_time/test/gregorian     -- test battery for the Gregorian system
+/libs/date_time/test/posix_time    -- test battery for the posix_time system
+/libs/date_time/test/local_time    -- test battery for the local_time system
+/libs/date_time/example/gregorian  -- example programs for dates
+/libs/date_time/example/posix_time -- time example programs
+/libs/date_time/example/local_time -- nifty example programs
+/libs/date_time/src/gregorian      -- cpp files for libboost_date_time
+/libs/date_time/src/posix_time     -- empty (one file, but no source code...)</programlisting>
   </para>
   
   <anchor id="other_boost_libs" />
@@ -143,7 +143,7 @@
       <listitem><ulink url="boost:/libs/tokenizer/index.html">boost.tokenizer</ulink> </listitem>
       <listitem><ulink url="boost:/libs/integer/doc/html/boost_integer/cstdint.html">boost.integer(cstdint)</ulink> </listitem>
       <listitem><ulink url="boost:/libs/utility/operators.htm">boost.operators</ulink> </listitem>
-      <listitem><ulink url="boost:/libs/conversion/lexical_cast.htm">boost.lexical_cast </ulink> </listitem>
+      <listitem><ulink url="boost:/libs/lexical_cast/index.html">boost.lexical_cast </ulink> </listitem>
       <listitem><ulink url="boost:/libs/smart_ptr/smart_ptr.htm">boost.smart_ptr (local time only)</ulink> </listitem>
       <listitem><ulink url="boost:/libs/algorithm/string/index.html">boost::string_algorithms </ulink> </listitem>
       <listitem><ulink url="boost:/libs/serialization/index.html">boost::serialize (serialization code only) </ulink> </listitem>

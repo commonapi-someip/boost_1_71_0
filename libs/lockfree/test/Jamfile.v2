@@ -4,15 +4,16 @@
 
 import testing ;
 
-lib boost_unit_test_framework ;
-lib boost_thread ;
+lib boost_chrono ;
+lib boost_interprocess ;
 lib boost_system ;
+lib boost_thread ;
+lib boost_unit_test_framework ;
 
 project
     : source-location .
     : requirements
-        <hardcode-dll-paths>true
-        <library>../../test/build//boost_test_exec_monitor
+        <library>../../test/build//boost_unit_test_framework
         <library>../../atomic/build//boost_atomic
     ;
 
@@ -29,10 +30,11 @@ rule test_all
       : # requirements
         <toolset>acc:<linkflags>-lrt
         <toolset>acc-pa_risc:<linkflags>-lrt
-        <toolset>gcc-mingw:<linkflags>"-lole32 -loleaut32 -lpsapi -ladvapi32"
+        <target-os>windows,<toolset>gcc:<linkflags>"-lole32 -loleaut32 -lpsapi -ladvapi32"
         <host-os>hpux,<toolset>gcc:<linkflags>"-Wl,+as,mpas"
         <library>../../thread/build//boost_thread/
         <threading>multi
+        <link>static
       ] ;
    }
 

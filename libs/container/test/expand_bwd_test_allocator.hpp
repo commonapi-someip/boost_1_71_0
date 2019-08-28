@@ -11,19 +11,28 @@
 #ifndef BOOST_CONTAINER_EXPAND_BWD_TEST_ALLOCATOR_HPP
 #define BOOST_CONTAINER_EXPAND_BWD_TEST_ALLOCATOR_HPP
 
-#if defined(_MSC_VER)
+#ifndef BOOST_CONFIG_HPP
+#  include <boost/config.hpp>
+#endif
+
+#if defined(BOOST_HAS_PRAGMA_ONCE)
 #  pragma once
 #endif
 
 #include <boost/container/detail/config_begin.hpp>
 #include <boost/container/detail/workaround.hpp>
-
 #include <boost/container/container_fwd.hpp>
+
 #include <boost/container/throw_exception.hpp>
+
+#include <boost/container/detail/addressof.hpp>
 #include <boost/container/detail/allocation_type.hpp>
-#include <boost/assert.hpp>
-#include <boost/container/detail/utilities.hpp>
 #include <boost/container/detail/version_type.hpp>
+
+#include <boost/move/adl_move_swap.hpp>
+
+#include <boost/assert.hpp>
+
 #include <memory>
 #include <algorithm>
 #include <cstddef>
@@ -53,14 +62,14 @@ class expand_bwd_test_allocator
    typedef T                                    value_type;
    typedef T *                                  pointer;
    typedef const T *                            const_pointer;
-   typedef typename container_detail::add_reference
+   typedef typename dtl::add_reference
                      <value_type>::type         reference;
-   typedef typename container_detail::add_reference
+   typedef typename dtl::add_reference
                      <const value_type>::type   const_reference;
    typedef std::size_t                          size_type;
    typedef std::ptrdiff_t                       difference_type;
 
-   typedef boost::container::container_detail::version_type<expand_bwd_test_allocator, 2>   version;
+   typedef boost::container::dtl::version_type<expand_bwd_test_allocator, 2>   version;
 
    //Dummy multiallocation chain
    struct multiallocation_chain{};
@@ -86,10 +95,10 @@ class expand_bwd_test_allocator
       , m_offset(other.m_offset),  m_allocations(0){ }
 
    pointer address(reference value)
-   {  return pointer(container_detail::addressof(value));  }
+   {  return pointer(dtl::addressof(value));  }
 
    const_pointer address(const_reference value) const
-   {  return const_pointer(container_detail::addressof(value));  }
+   {  return const_pointer(dtl::addressof(value));  }
 
    pointer allocate(size_type , cvoid_ptr hint = 0)
    {  (void)hint; return 0; }
@@ -109,42 +118,40 @@ class expand_bwd_test_allocator
 
    friend void swap(self_t &alloc1, self_t &alloc2)
    {
-      boost::container::swap_dispatch(alloc1.mp_buffer, alloc2.mp_buffer);
-      boost::container::swap_dispatch(alloc1.m_size,    alloc2.m_size);
-      boost::container::swap_dispatch(alloc1.m_offset,  alloc2.m_offset);
+      boost::adl_move_swap(alloc1.mp_buffer, alloc2.mp_buffer);
+      boost::adl_move_swap(alloc1.m_size,    alloc2.m_size);
+      boost::adl_move_swap(alloc1.m_offset,  alloc2.m_offset);
    }
 
    //Experimental version 2 expand_bwd_test_allocator functions
 
-   std::pair<pointer, bool>
-      allocation_command(boost::container::allocation_type command,
-                         size_type limit_size,
-                         size_type preferred_size,
-                         size_type &received_size, const pointer &reuse = 0)
+   pointer allocation_command(boost::container::allocation_type command,
+                         size_type limit_size,size_type &prefer_in_recvd_out_size,pointer &reuse)
    {
-      (void)preferred_size;   (void)reuse;   (void)command;
+      (void)reuse;   (void)command;
       //This allocator only expands backwards!
       assert(m_allocations == 0 || (command & boost::container::expand_bwd));
 
-      received_size = limit_size;
+      prefer_in_recvd_out_size = limit_size;
 
       if(m_allocations == 0){
          if((m_offset + limit_size) > m_size){
             assert(0);
          }
          ++m_allocations;
-         return std::pair<pointer, bool>(mp_buffer + m_offset, false);
+         reuse = 0;
+         return (mp_buffer + m_offset);
       }
       else if(m_allocations == 1){
          if(limit_size > m_size){
             assert(0);
          }
          ++m_allocations;
-         return std::pair<pointer, bool>(mp_buffer, true);
+         return mp_buffer;
       }
       else{
          throw_bad_alloc();
-         return std::pair<pointer, bool>(mp_buffer, true);
+         return mp_buffer;
       }
    }
 
@@ -173,14 +180,14 @@ class expand_bwd_test_allocator
 
 //!Equality test for same type of expand_bwd_test_allocator
 template<class T> inline
-bool operator==(const expand_bwd_test_allocator<T>  &alloc1,
-                const expand_bwd_test_allocator<T>  &alloc2)
+bool operator==(const expand_bwd_test_allocator<T>  &,
+                const expand_bwd_test_allocator<T>  &)
 {  return false; }
 
 //!Inequality test for same type of expand_bwd_test_allocator
 template<class T> inline
-bool operator!=(const expand_bwd_test_allocator<T>  &alloc1,
-                const expand_bwd_test_allocator<T>  &alloc2)
+bool operator!=(const expand_bwd_test_allocator<T>  &,
+                const expand_bwd_test_allocator<T>  &)
 {  return true; }
 
 }  //namespace test {

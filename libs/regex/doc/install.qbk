@@ -43,7 +43,7 @@ this:
 
        - has_icu builds           : yes
 
-Whick means that ICU has been found, and support for it will be enabled
+Which means that ICU has been found, and support for it will be enabled
 in the library build.  
 
 [tip If you don't want the regex library to use ICU then build with the 
@@ -111,8 +111,6 @@ There are two #defines you should be aware of:
 
 * BOOST_HAS_ICU should be defined if you want ICU support compiled in.
 * BOOST_REGEX_DYN_LINK should be defined if you are building a DLL on Windows.
-
-[important The makefiles that were supplied with Boost.Regex are now deprecated and will be removed in the next release.]
 
 [endsect]
 

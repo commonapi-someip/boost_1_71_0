@@ -9,7 +9,7 @@
 
 #include <boost/phoenix.hpp>
 #include <boost/range/as_literal.hpp>
-#include <boost/detail/lightweight_test.hpp>
+#include <boost/core/lightweight_test.hpp>
 
 using namespace boost::phoenix::placeholders;
 using namespace boost::phoenix;
@@ -18,11 +18,14 @@ int main()
 {
   char X('x');
     find(boost::as_literal("fox"), 'x')();     // works
-#ifndef BOOST_NO_CXX11_DECLTYPE
+#if !(defined (BOOST_NO_CXX11_DECLTYPE) || \
+      defined (BOOST_INTEL_CXX_VERSION) || \
+      (BOOST_GCC_VERSION < 40500) )
     const char *Y = find(boost::as_literal("fox"), arg1)('x'); // works for C++11
 #else
     const char *Y = find(boost::as_literal("fox"), construct<char>(arg1))('x'); // works
 #endif
     BOOST_TEST(X == *Y);
 
+    return boost::report_errors();
 }

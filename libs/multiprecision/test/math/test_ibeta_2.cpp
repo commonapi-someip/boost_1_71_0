@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////
 //  Copyright 2011 John Maddock. Distributed under the Boost
 //  Software License, Version 1.0. (See accompanying file
-//  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_
+//  LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt
 
 #include "setup.hpp"
 #include "table_type.hpp"
@@ -36,6 +36,13 @@ void expected_results()
       "[^|]*",                          // compiler
       "[^|]*",                          // stdlib
       "[^|]*",                          // platform
+      ".*mpfr_float_backend<0>.*",     // test type(s)
+      "(?i).*medium.*",                 // test data group
+      ".*", 400, 100);               // test function
+   add_expected_result(
+      "[^|]*",                          // compiler
+      "[^|]*",                          // stdlib
+      "[^|]*",                          // platform
       ".*",                             // test type(s)
       "(?i).*small.*",                  // test data group
       ".*", 90, 25);  // test function
@@ -54,7 +61,7 @@ void expected_results()
       "[^|]*",                          // platform
       ".*",                             // test type(s)
       "(?i).*medium.*",                 // test data group
-      ".*", 200, 50);  // test function
+      ".*", 220, 50);  // test function
    add_expected_result(
       "[^|]*",                          // compiler
       "[^|]*",                          // stdlib

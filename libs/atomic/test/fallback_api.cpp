@@ -9,11 +9,10 @@
 
 #include <boost/atomic.hpp>
 #include <boost/cstdint.hpp>
-#include <boost/test/minimal.hpp>
 
 #include "api_test_helpers.hpp"
 
-int test_main(int, char *[])
+int main(int, char *[])
 {
     test_flag_api();
 
@@ -36,6 +35,17 @@ int test_main(int, char *[])
     test_integral_api<boost::int64_t>();
     test_integral_api<long long>();
     test_integral_api<unsigned long long>();
+#if defined(BOOST_HAS_INT128)
+    test_integral_api<boost::int128_type>();
+    test_integral_api<boost::uint128_type>();
+#endif
+
+    test_floating_point_api<float>();
+    test_floating_point_api<double>();
+    test_floating_point_api<long double>();
+#if defined(BOOST_HAS_FLOAT128)
+    test_floating_point_api<boost::float128_type>();
+#endif
 
     test_pointer_api<int>();
 
@@ -46,6 +56,9 @@ int test_main(int, char *[])
     test_struct_api<test_struct<boost::uint32_t> >();
     test_struct_api<test_struct<boost::uint64_t> >();
 
+    // https://svn.boost.org/trac/boost/ticket/10994
+    test_struct_x2_api<test_struct_x2<boost::uint64_t> >();
+
     // https://svn.boost.org/trac/boost/ticket/9985
     test_struct_api<test_struct<double> >();
 
@@ -55,5 +68,5 @@ int test_main(int, char *[])
     // Other non-trivial constructors are allowed.
     test_struct_with_ctor_api();
 
-    return 0;
+    return boost::report_errors();
 }

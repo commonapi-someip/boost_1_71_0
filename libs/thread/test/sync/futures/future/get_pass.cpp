@@ -22,7 +22,7 @@
 
 //#define BOOST_THREAD_VERSION 3
 #define BOOST_THREAD_VERSION 4
-#define BOOST_THREAD_USES_LOG
+//#define BOOST_THREAD_USES_LOG
 #define BOOST_THREAD_USES_LOG_THREAD_ID
 #include <boost/thread/detail/log.hpp>
 
@@ -31,6 +31,10 @@
 #include <boost/detail/lightweight_test.hpp>
 
 #if defined BOOST_THREAD_USES_CHRONO
+
+#ifdef BOOST_MSVC
+#pragma warning(disable: 4127) // conditional expression is constant
+#endif
 
 namespace boost
 {

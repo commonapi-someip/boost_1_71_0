@@ -2,6 +2,7 @@
 //
 // Copyright (c) 2012-2013 Adam Wulkiewicz, Lodz, Poland.
 // Copyright (c) 2011-2013 Andrew Hundt.
+// Copyright (c) 2014-2014 Ion Gaztanaga
 //
 // Use, modification and distribution is subject to the Boost Software License,
 // Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
@@ -10,14 +11,18 @@
 #ifndef BOOST_CONTAINER_VARRAY_HPP
 #define BOOST_CONTAINER_VARRAY_HPP
 
-#if defined(_MSC_VER)
+#ifndef BOOST_CONFIG_HPP
+#  include <boost/config.hpp>
+#endif
+
+#if defined(BOOST_HAS_PRAGMA_ONCE)
 #  pragma once
 #endif
 
 #include <boost/container/detail/config_begin.hpp>
 
 #include "detail/varray.hpp"
-#include <boost/move/move.hpp>
+#include <boost/move/utility_core.hpp>
 
 namespace boost { namespace container {
 
@@ -49,9 +54,9 @@ namespace boost { namespace container {
  */
 template <typename Value, std::size_t Capacity>
 class varray
-    : public container_detail::varray<Value, Capacity>
+    : public dtl::varray<Value, Capacity>
 {
-    typedef container_detail::varray<Value, Capacity> base_t;
+    typedef dtl::varray<Value, Capacity> base_t;
 
     BOOST_COPYABLE_AND_MOVABLE(varray)
 
@@ -195,7 +200,7 @@ public:
     //!   Linear O(N).
     template <std::size_t C>
 // TEMPORARY WORKAROUND
-#if defined(BOOST_NO_RVALUE_REFERENCES)
+#if defined(BOOST_NO_CXX11_RVALUE_REFERENCES)
     varray & operator=(::boost::rv< varray<value_type, C> > const& other)
 #else
     varray & operator=(varray<value_type, C> const& other)
@@ -233,7 +238,7 @@ public:
     //!   Linear O(N).
     template <std::size_t C>
     varray(BOOST_RV_REF_2_TEMPL_ARGS(varray, value_type, C) other)
-        : base_t(boost::move(static_cast<container_detail::varray<value_type, C>&>(other)))
+        : base_t(boost::move(static_cast<dtl::varray<value_type, C>&>(other)))
     {}
 
     //! @brief Move assignment. Moves Values stored in the other varray to this one.
@@ -267,7 +272,7 @@ public:
     template <std::size_t C>
     varray & operator=(BOOST_RV_REF_2_TEMPL_ARGS(varray, value_type, C) other)
     {
-        base_t::operator=(boost::move(static_cast<container_detail::varray<value_type, C>&>(other)));
+        base_t::operator=(boost::move(static_cast<dtl::varray<value_type, C>&>(other)));
         return *this;
     }
 

@@ -18,6 +18,29 @@
 
 #include <boost/heap/heap_concepts.hpp>
 
+#ifdef BOOST_NO_CXX98_RANDOM_SHUFFLE
+#include <cstdlib>
+#include <iterator>
+
+template<class RandomIt>
+void random_shuffle(RandomIt first, RandomIt last)
+{
+    typedef typename std::iterator_traits<RandomIt>::difference_type difference_type;
+    difference_type n = last - first;
+    for (difference_type i = n-1; i > 0; --i) {
+        difference_type j = std::rand() % (i + 1);
+        if (j != i) {
+		   using std::swap;  
+           swap(first[i], first[j]);
+        }
+    }
+}
+
+#else
+	
+using std::random_shuffle;
+
+#endif
 
 typedef boost::default_constructible_archetype<
         boost::less_than_comparable_archetype<
@@ -132,7 +155,7 @@ void pri_queue_test_random_push(void)
         test_data data = make_test_data(i);
 
         test_data shuffled (data);
-        std::random_shuffle(shuffled.begin(), shuffled.end());
+        random_shuffle(shuffled.begin(), shuffled.end());
 
         fill_q(q, shuffled);
 
@@ -211,7 +234,7 @@ void pri_queue_test_swap(void)
         pri_queue q;
         test_data data = make_test_data(i);
         test_data shuffled (data);
-        std::random_shuffle(shuffled.begin(), shuffled.end());
+        random_shuffle(shuffled.begin(), shuffled.end());
         fill_q(q, shuffled);
 
         pri_queue r;
@@ -229,24 +252,24 @@ void pri_queue_test_iterators(void)
     for (int i = 0; i != test_size; ++i) {
         test_data data = make_test_data(test_size);
         test_data shuffled (data);
-        std::random_shuffle(shuffled.begin(), shuffled.end());
+        random_shuffle(shuffled.begin(), shuffled.end());
         pri_queue q;
         BOOST_REQUIRE(q.begin() == q.end());
         fill_q(q, shuffled);
 
-        for (unsigned long i = 0; i != data.size(); ++i)
-            BOOST_REQUIRE(std::find(q.begin(), q.end(), data[i]) != q.end());
+        for (unsigned long j = 0; j != data.size(); ++j)
+            BOOST_REQUIRE(std::find(q.begin(), q.end(), data[j]) != q.end());
 
-        for (unsigned long i = 0; i != data.size(); ++i)
-            BOOST_REQUIRE(std::find(q.begin(), q.end(), data[i] + data.size()) == q.end());
+        for (unsigned long j = 0; j != data.size(); ++j)
+            BOOST_REQUIRE(std::find(q.begin(), q.end(), data[j] + data.size()) == q.end());
 
         test_data data_from_queue(q.begin(), q.end());
         std::sort(data_from_queue.begin(), data_from_queue.end());
 
         BOOST_REQUIRE(data == data_from_queue);
 
-        for (unsigned long i = 0; i != data.size(); ++i) {
-            BOOST_REQUIRE_EQUAL((long)std::distance(q.begin(), q.end()), (long)(data.size() - i));
+        for (unsigned long j = 0; j != data.size(); ++j) {
+            BOOST_REQUIRE_EQUAL((long)std::distance(q.begin(), q.end()), (long)(data.size() - j));
             q.pop();
         }
     }
@@ -258,7 +281,7 @@ void pri_queue_test_ordered_iterators(void)
     for (int i = 0; i != test_size; ++i) {
         test_data data = make_test_data(i);
         test_data shuffled (data);
-        std::random_shuffle(shuffled.begin(), shuffled.end());
+        random_shuffle(shuffled.begin(), shuffled.end());
         pri_queue q;
         BOOST_REQUIRE(q.ordered_begin() == q.ordered_end());
         fill_q(q, shuffled);
@@ -267,14 +290,14 @@ void pri_queue_test_ordered_iterators(void)
         std::reverse(data_from_queue.begin(), data_from_queue.end());
         BOOST_REQUIRE(data == data_from_queue);
 
-        for (unsigned long i = 0; i != data.size(); ++i)
-            BOOST_REQUIRE(std::find(q.ordered_begin(), q.ordered_end(), data[i]) != q.ordered_end());
+        for (unsigned long j = 0; j != data.size(); ++j)
+            BOOST_REQUIRE(std::find(q.ordered_begin(), q.ordered_end(), data[j]) != q.ordered_end());
 
-        for (unsigned long i = 0; i != data.size(); ++i)
-            BOOST_REQUIRE(std::find(q.ordered_begin(), q.ordered_end(), data[i] + data.size()) == q.ordered_end());
+        for (unsigned long j = 0; j != data.size(); ++j)
+            BOOST_REQUIRE(std::find(q.ordered_begin(), q.ordered_end(), data[j] + data.size()) == q.ordered_end());
 
-        for (unsigned long i = 0; i != data.size(); ++i) {
-            BOOST_REQUIRE_EQUAL((long)std::distance(q.begin(), q.end()), (long)(data.size() - i));
+        for (unsigned long j = 0; j != data.size(); ++j) {
+            BOOST_REQUIRE_EQUAL((long)std::distance(q.begin(), q.end()), (long)(data.size() - j));
             q.pop();
         }
     }
@@ -463,21 +486,21 @@ struct less_with_T
 
 class thing {
 public:
-	thing( int a_, int b_, int c_ ) : a(a_), b(b_), c(c_) {}
+    thing( int a_, int b_, int c_ ) : a(a_), b(b_), c(c_) {}
 public:
-	int a;
-	int b;
-	int c;
+    int a;
+    int b;
+    int c;
 };
 
 class cmpthings {
 public:
-	bool operator() ( const thing& lhs, const thing& rhs ) const  {
-		return lhs.a > rhs.a;
-	}
-	bool operator() ( const thing& lhs, const thing& rhs ) {
-		return lhs.a > rhs.a;
-	}
+    bool operator() ( const thing& lhs, const thing& rhs ) const  {
+        return lhs.a > rhs.a;
+    }
+    bool operator() ( const thing& lhs, const thing& rhs ) {
+        return lhs.a > rhs.a;
+    }
 };
 
 #define RUN_EMPLACE_TEST(HEAP_TYPE)                                     \

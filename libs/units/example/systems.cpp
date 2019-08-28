@@ -28,7 +28,7 @@ namespace units {                                                               
 namespace namespace_ {                                                                       \
 typedef make_system<unit_name_ ## _base_unit>::type    unit_name_ ## system_;                \
 typedef unit<dimension_ ## _dimension,unit_name_ ## system_> unit_name_ ## _ ## dimension_;  \
-static const unit_name_ ## _ ## dimension_    unit_name_ ## s;                               \
+static constexpr unit_name_ ## _ ## dimension_    unit_name_ ## s;                           \
 }                                                                                            \
 }                                                                                            \
 }                                                                                            \
@@ -228,34 +228,6 @@ BOOST_UNITS_DEFINE_SINGLE_UNIT_SYSTEM(us,cup,volume)
 BOOST_UNITS_DEFINE_SINGLE_UNIT_SYSTEM(us,pint,volume)
 BOOST_UNITS_DEFINE_SINGLE_UNIT_SYSTEM(us,quart,volume)
 BOOST_UNITS_DEFINE_SINGLE_UNIT_SYSTEM(us,gallon,volume)
-
-#ifdef __GNUC__
-#include <cxxabi.h>
-#endif
-
-inline std::string demangle(const char* name)
-{
-    #ifdef __GNUC__
-    // need to demangle C++ symbols
-    char*       realname;
-    std::size_t len; 
-    int         stat;
-     
-    realname = abi::__cxa_demangle(name,NULL,&len,&stat);
-    
-    if (realname != NULL)
-    {
-        const std::string    out(realname);
-        free(realname);
-        
-        return out;
-    }
-    
-    return std::string("demangle :: error - unable to demangle specified symbol");
-    #else
-    return name;
-    #endif
-}
 
 int main(void)
 {

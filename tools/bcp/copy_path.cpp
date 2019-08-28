@@ -59,7 +59,7 @@ void bcp_implementation::copy_path(const fs::path& p)
    //
    // do text based copy if requested:
    //
-   if(p.leaf() == "Jamroot")
+   if((p.leaf() == "Jamroot") && m_namespace_name.size())
    {
       static std::vector<char> v1, v2;
       v1.clear();
@@ -151,7 +151,7 @@ void bcp_implementation::copy_path(const fs::path& p)
          "|"
             "()boost(_asio_detail_posix_thread_function|_regex_free_static_mutex)"
          "|"
-            "()(lw_thread_routine|at_thread_exit|on_process_enter|on_process_exit|on_thread_enter|on_thread_exit|tss_cleanup_implemented)"
+         "()\\<(lw_thread_routine|at_thread_exit|on_process_enter|on_process_exit|on_thread_enter|on_thread_exit|tss_cleanup_implemented)\\>"
          "|"
             "(BOOST_CLASS_REQUIRE4?[^;]*)boost((?:_\\w+)?\\s*,)"
          "|"

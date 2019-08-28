@@ -1,5 +1,5 @@
 /*
- *          Copyright Andrey Semashev 2007 - 2014.
+ *          Copyright Andrey Semashev 2007 - 2015.
  * Distributed under the Boost Software License, Version 1.0.
  *    (See accompanying file LICENSE_1_0.txt or copy at
  *          http://www.boost.org/LICENSE_1_0.txt)
@@ -33,7 +33,8 @@ void init_file_collecting(boost::shared_ptr< file_sink > sink)
     sink->locked_backend()->set_file_collector(sinks::file::make_collector(
         keywords::target = "logs",                      /*< the target directory >*/
         keywords::max_size = 16 * 1024 * 1024,          /*< maximum total size of the stored files, in bytes >*/
-        keywords::min_free_space = 100 * 1024 * 1024    /*< minimum free space on the drive, in bytes >*/
+        keywords::min_free_space = 100 * 1024 * 1024,   /*< minimum free space on the drive, in bytes >*/
+        keywords::max_files = 512                       /*< maximum number of stored files >*/
     ));
 }
 //]
@@ -140,7 +141,7 @@ int main(int argc, char* argv[])
         }
 
         // Test that XML character decoration works
-        BOOST_LOG(lg) << "Special XML characters: &, <, >, '";
+        BOOST_LOG(lg) << "Special XML characters: &, <, >, \", '";
 
         return 0;
     }

@@ -142,7 +142,7 @@ public:
 class moveable
 {
 private:
-    BOOST_MOVABLE_BUT_NOT_COPYABLE( moveable);
+    BOOST_MOVABLE_BUT_NOT_COPYABLE( moveable)
 
 public:
     bool    state;
@@ -596,7 +596,6 @@ boost::unit_test::test_suite * init_unit_test_suite( int, char* [])
     test->add( BOOST_TEST_CASE( & test_yield_to_void) );
     test->add( BOOST_TEST_CASE( & test_yield_to_int) );
     test->add( BOOST_TEST_CASE( & test_yield_to_ref) );
-    test->add( BOOST_TEST_CASE( & test_yield_to_different) );
     test->add( BOOST_TEST_CASE( & test_yield_to_different) );
     test->add( BOOST_TEST_CASE( & test_move_coro) );
     test->add( BOOST_TEST_CASE( & test_vptr) );

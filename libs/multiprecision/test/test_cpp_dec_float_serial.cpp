@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////
 //  Copyright 2013 John Maddock. Distributed under the Boost
 //  Software License, Version 1.0. (See accompanying file
-//  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_
+//  LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt
 
 //
 // Compare arithmetic results using fixed_int to GMP results.
@@ -27,7 +27,7 @@ int main()
    test<cpp_dec_float_50>();
 #endif
 #ifdef TEST2
-   test<number<cpp_dec_float<100, boost::int64_t, std::allocator<void> > > >();
+   test<number<cpp_dec_float<100, boost::int64_t, std::allocator<char> > > >();
 #endif
    return boost::report_errors();
 }
